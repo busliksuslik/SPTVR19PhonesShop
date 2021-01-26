@@ -6,10 +6,14 @@
 package servlets;
 
 import entites.Product;
+import entites.Role;
 import entites.User;
+import entites.UserRoles;
 import facades.HistoryFacade;
 import facades.ProductFacade;
+import facades.RoleFacade;
 import facades.UserFacade;
+import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -25,7 +29,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author nikita
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {
+@WebServlet(name = "LoginServlet",loadOnStartup = 1, urlPatterns = {
     "/loginForm",
     "/login",
     "/logout",
@@ -40,6 +44,37 @@ public class LoginServlet extends HttpServlet {
     private UserFacade userFacade;
     @EJB
     private HistoryFacade historyFacade;
+    @EJB
+    private UserRolesFacade userRolesFacade;
+    @EJB
+    private RoleFacade roleFacade;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if(userFacade.findAll().size() > 0) return;
+        
+        User user = new User("admin","admin");
+        userFacade.create(user);
+        
+        Role role = new Role("ADMIN");
+        roleFacade.create(role);
+        
+        UserRoles userRoles = new UserRoles(user,role);
+        userRolesFacade.create(userRoles);
+        
+        role = new Role("MANAGER");
+        roleFacade.create(role);
+        
+        userRoles = new UserRoles(user,role);
+        userRolesFacade.create(userRoles);
+        
+        role = new Role("CUSTOMER");
+        roleFacade.create(role);
+        
+        userRoles = new UserRoles(user,role);
+        userRolesFacade.create(userRoles);
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -104,6 +139,9 @@ public class LoginServlet extends HttpServlet {
                 }
                 User user = new User(name,password);
                 userFacade.create(user);
+                Role role = roleFacade.findByName("READER");
+                UserRoles userRoles = new UserRoles(user,role);
+                userRolesFacade.create(userRoles);
                 request.setAttribute("info", "пользователь создан ");
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;

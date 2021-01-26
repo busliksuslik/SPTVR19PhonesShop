@@ -12,7 +12,9 @@ import entites.Product;
 import entites.User;
 import facades.HistoryFacade;
 import facades.ProductFacade;
+import facades.RoleFacade;
 import facades.UserFacade;
+import facades.UserRolesFacade;
 import java.io.IOException;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -46,6 +48,10 @@ public class UserServlet extends HttpServlet {
     private UserFacade userFacade;
     @EJB
     private HistoryFacade historyFacade;
+    @EJB
+    private UserRolesFacade userRolesFacade;
+    @EJB
+    private RoleFacade roleFacade;
     
 
     /**
@@ -69,6 +75,12 @@ public class UserServlet extends HttpServlet {
         }
         User user = (User) session.getAttribute("user");
         if (user  == null){
+            request.setAttribute("info", "нет прав");
+            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            return ;
+        }
+        Boolean isRole =  userRolesFacade.isRole("READER" , user);
+        if (!isRole){
             request.setAttribute("info", "нет прав");
             request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
             return ;

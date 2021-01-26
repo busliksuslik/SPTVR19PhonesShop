@@ -9,7 +9,9 @@ import entites.Product;
 import entites.User;
 import facades.HistoryFacade;
 import facades.ProductFacade;
+import facades.RoleFacade;
 import facades.UserFacade;
+import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -40,6 +42,10 @@ public class ManagerServlet extends HttpServlet {
     private UserFacade userFacade;
     @EJB
     private HistoryFacade historyFacade;
+    @EJB
+    private UserRolesFacade userRolesFacade;
+    @EJB
+    private RoleFacade roleFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -66,7 +72,8 @@ public class ManagerServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
             return ;
         }
-        if (!"manager".equals(user.getRole())){
+        Boolean isRole =  userRolesFacade.isRole("MANAGER" , user);
+        if (!isRole){
             request.setAttribute("info", "нет прав");
             request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
             return ;
