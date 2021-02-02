@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
     "/changeUser",
     "/changeProduct",
     "/users",
+    "/adminMode"
 })
 public class ManagerServlet extends HttpServlet {
     @EJB
@@ -63,26 +64,26 @@ public class ManagerServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
         User user = (User) session.getAttribute("user");
         if (user  == null){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
         Boolean isRole =  userRolesFacade.isRole("MANAGER" , user);
         if (!isRole){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
         String path = request.getServletPath();
         
         switch (path) {
             case "/addProduct":{
-                request.getRequestDispatcher("/WEB-INF/addForms/addProductForm.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                 break;
             }
             case "/createProduct":{
@@ -93,25 +94,25 @@ public class ManagerServlet extends HttpServlet {
                         "".equals(pricestr)  || pricestr == null ||
                         "".equals(amountstr)  || amountstr == null){
                     request.setAttribute("info", "INCORRECT");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addProductForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                     break;
                 }
                 
                 Product product = new Product(name,Integer.parseInt(amountstr),Integer.parseInt(pricestr));
                 if (productFacade.productExist(name,pricestr)){
                     request.setAttribute("info", "Такой продукт уже существует");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addProductForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                     break;
                 }
                 productFacade.create(product);
                 request.setAttribute("info", "продукт Создан");
-                request.getRequestDispatcher("/WEB-INF/adminMode.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("adminMode")).forward(request, response);
                 break;
             }
             case "/users":{
                 List<User> listUsers = userFacade.findAll();
                 request.setAttribute("listUsers", listUsers);
-                request.getRequestDispatcher("/WEB-INF/showers/users.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("users")).forward(request, response);
                 break;
             }
             case "/changeProduct":{
@@ -124,7 +125,7 @@ public class ManagerServlet extends HttpServlet {
                     request.setAttribute("info", "Не выбран начальный продукт");
                     List<Product> listProducts = productFacade.findAll();
                     request.setAttribute("listProducts", listProducts);
-                    request.getRequestDispatcher("/WEB-INF/changeForms/changeProduct.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProduct")).forward(request, response);
                 }
                 if (!("".equals(name)  || name == null)){
                     begin.setName(name);
@@ -139,29 +140,21 @@ public class ManagerServlet extends HttpServlet {
                     request.setAttribute("info", "Такой продукт уже существует");
                     List<Product> listProducts = productFacade.findAll();
                     request.setAttribute("listProducts", listProducts);
-                    request.getRequestDispatcher("/WEB-INF/changeForms/changeProduct.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProduct")).forward(request, response);
                 }
                 productFacade.edit(begin);
                 request.setAttribute("info", "продукт изменён");
-                request.getRequestDispatcher("/WEB-INF/adminMode.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("adminMode")).forward(request, response);
                 break;
             }
             case "/adminMode":{
-                String name = request.getParameter("name");
-                String pass = request.getParameter("password");
-                if(userFacade.userExist(name, pass, "admin")){
-                    request.getRequestDispatcher("/WEB-INF/adminMode.jsp").forward(request, response);
-                    break;
-                } else {
-                    request.setAttribute("info","Нет такого администратора или неправильный пароль");
-                    request.getRequestDispatcher("index.jsp").forward(request, response);
-                    break;
-                }
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("adminMode")).forward(request, response);
+                break;
             }
             case "/changeProductForm":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("/WEB-INF/changeForms/changeProduct.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProduct")).forward(request, response);
                 break;
             }
             

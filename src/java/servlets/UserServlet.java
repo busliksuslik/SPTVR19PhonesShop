@@ -31,7 +31,6 @@ import javax.servlet.http.HttpSession;
  * @author user
  */
 @WebServlet(name = "UserServlet", urlPatterns = {
-    "/adminMode",
     "/histories",
     "/addHistory",
     "/addMoney",
@@ -70,19 +69,19 @@ public class UserServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
         User user = (User) session.getAttribute("user");
         if (user  == null){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
-        Boolean isRole =  userRolesFacade.isRole("READER" , user);
+        Boolean isRole =  userRolesFacade.isRole("CUSTOMER" , user);
         if (!isRole){
             request.setAttribute("info", "нет прав");
-            request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
         String path = request.getServletPath();
@@ -92,7 +91,7 @@ public class UserServlet extends HttpServlet {
             case "/addHistory":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("/WEB-INF/addForms/addHistoryForm.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                 break;
             }
             case "/createHistory":{
@@ -101,20 +100,15 @@ public class UserServlet extends HttpServlet {
                 String namestr = request.getParameter("name");
                 String passstr = request.getParameter("password");
                 Product product = productFacade.find(Long.parseLong(productstr));
-                user = userFacade.userFind(namestr, passstr);
-                if(user == null){
-                    request.setAttribute("info","Непровильный пароль или имя пользователя");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addHistoryForm.jsp").forward(request, response);
-                    break;
-                }
+                user = (User) session.getAttribute("user");
                 if (product.getCount() < Integer.parseInt(count)){
                     request.setAttribute("info","Недостаточно товара");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addHistoryForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                     break;
                 }
                 if (user.getMoney() < product.getPrice()*Integer.parseInt(count)){
                     request.setAttribute("info","Недостаточно денег");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addHistoryForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                     break;
                 }
                 user.setMoney(user.getMoney() - product.getPrice()*Integer.parseInt(count));
@@ -124,33 +118,32 @@ public class UserServlet extends HttpServlet {
                 productFacade.edit(product);
                 userFacade.edit(user);
                 request.setAttribute("info","Куплено");
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             case "/addMoney":{
-                request.getRequestDispatcher("/WEB-INF/changeForms/changeUserMoney.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoney")).forward(request, response);
                 break;
             }
             case "/createMoney":{
-                String namestr = request.getParameter("name");
                 String moneystr = request.getParameter("money");
-                user = userFacade.userFind(namestr);
+                user = (User) session.getAttribute("user");
                 if (user == null){
                     request.setAttribute("info","нет такого пользователя");
-                    request.getRequestDispatcher("/WEB-INF/changeForms/changeUserMoney.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoney")).forward(request, response);
                     break;
                 }
                 user.setMoney(Integer.parseInt(moneystr)+user.getMoney());
                 userFacade.edit(user);
                 request.setAttribute("info", "деньги добавлены");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             
             case "/histories":{
                 List<History> listHistories = historyFacade.findAll();
                 request.setAttribute("listHistories", listHistories);
-                request.getRequestDispatcher("/WEB-INF/showers/histories.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("hisories")).forward(request, response);
                 break;
             }
 

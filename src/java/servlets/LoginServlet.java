@@ -17,6 +17,7 @@ import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,6 +49,8 @@ public class LoginServlet extends HttpServlet {
     private UserRolesFacade userRolesFacade;
     @EJB
     private RoleFacade roleFacade;
+    
+    public static final ResourceBundle pathToJsp = ResourceBundle.getBundle("property.pathToJsp");
 
     @Override
     public void init() throws ServletException {
@@ -93,7 +96,7 @@ public class LoginServlet extends HttpServlet {
         
         switch (path) {
             case "/loginForm":{
-                request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
                 break;
             }
             case "/login":{
@@ -101,13 +104,13 @@ public class LoginServlet extends HttpServlet {
                 String pass = request.getParameter("password");
                 if(!userFacade.userExist(name, pass)){
                     request.setAttribute("info","Нет такого gjkmpjdfntkz");
-                    request.getRequestDispatcher("/WEB-INF/loginForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
                     break;
                 } 
                 HttpSession session = request.getSession(true);
                 session.setAttribute("user", userFacade.userFind(name, pass));
                 request.setAttribute("info","success");
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             case "/logout":{
@@ -116,11 +119,11 @@ public class LoginServlet extends HttpServlet {
                     session.invalidate();
                 }
                 request.setAttribute("info","вы вышли");
-                request.getRequestDispatcher("index.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             case "/addUser":{
-                request.getRequestDispatcher("/WEB-INF/addForms/addUserForm.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addUserForm")).forward(request, response);
                 break;
             }
             case "/createUser":{
@@ -129,27 +132,27 @@ public class LoginServlet extends HttpServlet {
                 if ("".equals(name)  || name == null ||
                         "".equals(password)  || password == null ){
                     request.setAttribute("info", "INCORRECT");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addUserForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addUserForm")).forward(request, response);
                     break;
                 }
                 if (userFacade.userExist(name)){
                     request.setAttribute("info", "пользователь уже существует");
-                    request.getRequestDispatcher("/WEB-INF/addForms/addUserForm.jsp").forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addUserForm")).forward(request, response);
                     break;
                 }
                 User user = new User(name,password);
                 userFacade.create(user);
-                Role role = roleFacade.findByName("READER");
+                Role role = roleFacade.findByName("CUSTOMER");
                 UserRoles userRoles = new UserRoles(user,role);
                 userRolesFacade.create(userRoles);
                 request.setAttribute("info", "пользователь создан ");
-                request.getRequestDispatcher("/index.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             case "/products":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("/WEB-INF/showers/products.jsp").forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("products")).forward(request, response);
                 break;
             }
         }

@@ -19,9 +19,6 @@
                 </c:forEach>
             </select>
             <input placeholder="Count" name = "count"value="${count}"><br>
-            <h3>user</h3>
-            <input placeholder="Name" name="name" value="${name}"><br>
-            <input placeholder="Password" name = "password"value="${password}"><br>
             <input style="" type="submit">
         </form>
     </body>

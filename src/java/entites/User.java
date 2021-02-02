@@ -25,7 +25,6 @@ public class User implements Serializable{
     private String login;
     private String password;
     private int money;
-    private String role = "user";
 
     public User(String login, String password) {
         this.login = login;
@@ -67,14 +66,6 @@ public class User implements Serializable{
         this.money = money;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-    
     
 
     

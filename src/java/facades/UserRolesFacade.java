@@ -31,10 +31,12 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
         super(UserRoles.class);
     }
 
-    public Boolean isRole(String roleName, User user) {
+    public boolean isRole(String name, User user) {
         try {
-            UserRoles userRoles = (UserRoles) em.createQuery("SELECT userRoles FROM userRoles userRoles WHERE userRoles.roleName = :role AND userRoles.user = :user")
-                    .setParameter("roleName", roleName).setParameter("user", user).getSingleResult();
+            UserRoles userRole = (UserRoles) em.createQuery("SELECT userRoles FROM UserRoles userRoles WHERE userRoles.role.name = :name AND userRoles.user = :user")
+                    .setParameter("name", name)
+                    .setParameter("user", user)
+                    .getSingleResult();
             return true;
         } catch (Exception e) {
             return false;

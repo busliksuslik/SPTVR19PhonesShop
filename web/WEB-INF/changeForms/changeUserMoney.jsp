@@ -13,7 +13,6 @@
     </head>
     <body>
         <form action = "createMoney" method="POST">
-            <input placeholder="Name" name="name" value="${name}"><br>
             <input placeholder="Money" name = "money"value="${money}"><br>
             <input style="" type="submit">
         </form>

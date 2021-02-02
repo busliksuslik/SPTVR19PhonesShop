@@ -20,6 +20,9 @@
         <a class="nav-link" href="index.jsp">Home</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="adminMode">adminMode</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="addProduct">add Product</a>
       </li>
       <li class="nav-item">

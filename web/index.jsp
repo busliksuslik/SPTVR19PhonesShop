@@ -15,12 +15,6 @@
     <body>
         <h1 style="color: #FF00FF; font-family: comic sans ms">admin</h1>
         <h1>${info}</h1>
-        <form action = "adminMode" method="POST">
-            <input placeholder="Name" name="name" value="${name}"><br>
-            <input placeholder="Password" name = "password"value="${password}"><br>
-            <input style="" type="submit">
-        </form>
-        <h1>${info}</h1>
         
     </body>
 </html>

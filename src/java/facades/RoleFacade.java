@@ -31,7 +31,7 @@ public class RoleFacade extends AbstractFacade<Role> {
 
     public Role findByName(String name) {
         try {
-            return (Role) em.createQuery("SELECT r FROM Role r WHERE r.name = :name)")
+            return (Role) em.createQuery("SELECT r FROM Role r WHERE r.name = :name")
                     .setParameter("name", name)
                     .getSingleResult();
         } catch (Exception e) {
