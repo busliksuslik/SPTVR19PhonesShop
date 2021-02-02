@@ -32,6 +32,9 @@
         <a class="nav-link" href="users">users</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="changeUserProperties">users roles</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="histories">histories</a>
       </li>
     </ul>

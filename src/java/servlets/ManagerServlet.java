@@ -6,6 +6,7 @@
 package servlets;
 
 import entites.Product;
+import entites.Role;
 import entites.User;
 import facades.HistoryFacade;
 import facades.ProductFacade;
@@ -14,7 +15,9 @@ import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,7 +37,9 @@ import javax.servlet.http.HttpSession;
     "/changeUser",
     "/changeProduct",
     "/users",
-    "/adminMode"
+    "/adminMode",
+    "/changeUserProperties",
+    "/setRole",
 })
 public class ManagerServlet extends HttpServlet {
     @EJB
@@ -155,6 +160,40 @@ public class ManagerServlet extends HttpServlet {
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProduct")).forward(request, response);
+                break;
+            }
+            case "/changeUserProperties":{
+                List<Role> roles = roleFacade.findAll();
+                request.setAttribute("listRoles", roles);
+                List<User> users = userFacade.findAll();
+                Map<User, List<Role>> usersMap = new HashMap<>();
+                for(User u : users){
+                    usersMap.put(u, userRolesFacade.getRoles(u));
+                }
+                request.setAttribute("usersMap", usersMap);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserProperties")).forward(request, response);
+                break;
+            }
+            case "/setRole":{
+                String roleId = request.getParameter("roleId");
+                String userId = request.getParameter("userId");
+                String changeRole = request.getParameter("changeRole");
+                if("".equals(roleId) || roleId == null
+                        || "".equals(userId) || userId == null){
+                    request.setAttribute("roleId", roleId);
+                    request.setAttribute("userId", userId);
+                    request.setAttribute("info", "Выберите все поля");
+                    request.getRequestDispatcher("/adminPanel").forward(request, response);
+                }
+                Role r = roleFacade.find(Long.parseLong(roleId));
+                User u = userFacade.find(Long.parseLong(userId));
+                if("0".equals(changeRole)){
+                    userRolesFacade.setRoleToUser(r,u);
+                }else if("1".equals(changeRole)){
+                    userRolesFacade.removeRoleFromUser(r,u);
+                }
+                request.setAttribute("info", "Роль назначена");
+                request.getRequestDispatcher("/adminPanel").forward(request, response);
                 break;
             }
             

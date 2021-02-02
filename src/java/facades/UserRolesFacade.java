@@ -8,6 +8,8 @@ package facades;
 import entites.Role;
 import entites.User;
 import entites.UserRoles;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,6 +42,32 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public List<Role> getRoles(User u) {
+        try {
+            return em.createQuery("SELECT ur.role FROM UserRoles ur WHERE ur.user = :user")
+                    .setParameter("user", u)
+                    .getResultList();
+        } catch (Exception e) {
+            return (List<Role>) new ArrayList<Role>();
+        }
+    }
+
+    public void setRoleToUser(Role r, User u) {
+        if(!this.isRole(r.getName(), u)){
+            UserRoles ur = new UserRoles(u, r);
+            this.create(ur);
+        }
+    }
+
+    public void removeRoleFromUser(Role r, User u) {
+        if(this.isRole(r.getName(), u)){
+            em.createQuery("DELETE FROM UserRoles ur WHERE ur.user = :user AND ur.role = :role")
+                    .setParameter("user", u)
+                    .setParameter("role", r)
+                    .executeUpdate();
         }
     }
     

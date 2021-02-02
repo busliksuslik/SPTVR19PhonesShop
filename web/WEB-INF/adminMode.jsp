@@ -19,6 +19,7 @@
             <li><a href="changeProductForm">change product</li>
             <li><a href="users">users</a></li>
             <li><a href="histories">histories</a></li>
+            <li><a href="changeUserProperties">users roles</a></li>
         </ul>
     </body>
 </html>
