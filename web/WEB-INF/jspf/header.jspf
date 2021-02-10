@@ -23,7 +23,7 @@
         <a class="nav-link" href="products">Products</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addUser">add user</a>
+        <a class="nav-link" href="addUserForm">add user</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="addMoney">add Money</a>
@@ -38,7 +38,7 @@
         <a class="nav-link" href="logout">log out</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="adminMode">admin mode</a>
+        <a class="nav-link" href="managerMode">manager mode</a>
       </li>
     </ul>
   </div>

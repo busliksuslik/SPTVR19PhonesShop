@@ -6,10 +6,12 @@
 package entites;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -23,6 +25,8 @@ public class Product implements Serializable {
     private String name;
     private int count;
     private int price;
+    @OneToOne
+    private Picture picture;
 
     public Product() {
     }
@@ -32,6 +36,14 @@ public class Product implements Serializable {
         this.count = count;
         this.price = price;
     }
+
+    public Product(String name, int count, int price, Picture picture) {
+        this.name = name;
+        this.count = count;
+        this.price = price;
+        this.picture = picture;
+    }
+    
     
 
     public Long getId() {
@@ -65,6 +77,61 @@ public class Product implements Serializable {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public Picture getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Picture picture) {
+        this.picture = picture;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + this.count;
+        hash = 97 * hash + this.price;
+        hash = 97 * hash + Objects.hashCode(this.picture);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Product other = (Product) obj;
+        if (this.count != other.count) {
+            return false;
+        }
+        if (this.price != other.price) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.picture, other.picture)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" + "name=" + name + ", count=" + count + ", price=" + price + '}';
+    }
+    
     
     
 }

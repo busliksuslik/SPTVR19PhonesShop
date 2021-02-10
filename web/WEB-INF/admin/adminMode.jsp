@@ -14,11 +14,6 @@
     <body>
         <h1>Admin mode</h1>
         <ul>
-            <li><a href="index.jsp">Home</a></li>
-            <li><a href="addProduct">add product</a></li>
-            <li><a href="changeProductForm">change product</li>
-            <li><a href="users">users</a></li>
-            <li><a href="histories">histories</a></li>
             <li><a href="changeUserProperties">users roles</a></li>
         </ul>
     </body>

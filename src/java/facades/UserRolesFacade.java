@@ -70,5 +70,6 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
                     .executeUpdate();
         }
     }
+
     
 }

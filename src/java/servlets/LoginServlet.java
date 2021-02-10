@@ -15,7 +15,6 @@ import facades.RoleFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
@@ -34,7 +33,7 @@ import javax.servlet.http.HttpSession;
     "/loginForm",
     "/login",
     "/logout",
-    "/addUser",
+    "/addUserForm",
     "/products",
     "/createUser",
 })
@@ -122,7 +121,7 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
-            case "/addUser":{
+            case "/addUserForm":{
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addUserForm")).forward(request, response);
                 break;
             }
