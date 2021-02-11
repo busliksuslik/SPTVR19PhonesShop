@@ -89,9 +89,6 @@ public class ManagerServlet extends HttpServlet {
         
         switch (path) {
             case "/addProductForm":{
-                request.setAttribute("activeCreateProduct", "true");
-                List<Picture> listPictures = pictureFacade.findAll();
-                request.setAttribute("listPictures", listPictures);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                 break;
             }
@@ -178,6 +175,27 @@ public class ManagerServlet extends HttpServlet {
                 List<Picture> listPictures = pictureFacade.findAll();
                 request.setAttribute("listPictures", listPictures);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
+                break;
+            }
+            case "/addTagsForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagsForm")).forward(request, response);
+                break;
+            }
+            case "/addTags":{
+                break;
+            }
+            case "/addTagsToProductForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagsToProductForm")).forward(request, response);
+                break;
+            }
+            case "/addTagsToProduct":{
+                break;
+            }
+            case "/changeTagsForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeTagsForm")).forward(request, response);
+                break;
+            }
+            case "/changeTags":{
                 break;
             }
 
