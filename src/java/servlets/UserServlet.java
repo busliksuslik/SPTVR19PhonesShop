@@ -31,11 +31,11 @@ import javax.servlet.http.HttpSession;
  * @author user
  */
 @WebServlet(name = "UserServlet", urlPatterns = {
-    "/histories",
+    "/addHistoryForm",
     "/addHistory",
+    
+    "/addMoneyForm",
     "/addMoney",
-    "/createHistory",
-    "/createMoney",
     
     
     
@@ -88,13 +88,13 @@ public class UserServlet extends HttpServlet {
         
         switch (path) {
             
-            case "/addHistory":{
+            case "/addHistoryForm":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                 break;
             }
-            case "/createHistory":{
+            case "/addHistory":{
                 String productstr = request.getParameter("product");
                 String count = request.getParameter("count");
                 String namestr = request.getParameter("name");
@@ -121,16 +121,16 @@ public class UserServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
-            case "/addMoney":{
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoney")).forward(request, response);
+            case "/addMoneyForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoneyForm")).forward(request, response);
                 break;
             }
-            case "/createMoney":{
+            case "/addMoney":{
                 String moneystr = request.getParameter("money");
                 user = (User) session.getAttribute("user");
                 if (user == null){
                     request.setAttribute("info","нет такого пользователя");
-                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoney")).forward(request, response);
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoneyForm")).forward(request, response);
                     break;
                 }
                 user.setMoney(Integer.parseInt(moneystr)+user.getMoney());
@@ -140,12 +140,7 @@ public class UserServlet extends HttpServlet {
                 break;
             }
             
-            case "/histories":{
-                List<History> listHistories = historyFacade.findAll();
-                request.setAttribute("listHistories", listHistories);
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("hisories")).forward(request, response);
-                break;
-            }
+            
 
         }
         

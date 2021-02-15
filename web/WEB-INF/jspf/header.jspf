@@ -9,27 +9,24 @@
     </head>
     <body> 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="index.jsp">Magaz</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarColor02">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.jsp">Home</a>
-      </li>
       <li class="nav-item">
         <a class="nav-link" href="products">Products</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addUserForm">add user</a>
+        <a class="nav-link" href="addUserForm">Registration</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addMoney">add Money</a>
+        <a class="nav-link" href="addMoneyForm">add Money</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addHistory">buy</a>
+        <a class="nav-link" href="addHistoryForm">buy</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="loginForm">Log in</a>

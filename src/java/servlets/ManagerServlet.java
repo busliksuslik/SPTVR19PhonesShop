@@ -5,14 +5,18 @@
  */
 package servlets;
 
+import entites.History;
 import entites.Picture;
 import entites.Product;
 import entites.Role;
+import entites.Tag;
 import entites.User;
 import facades.HistoryFacade;
 import facades.PictureFacade;
 import facades.ProductFacade;
+import facades.ProductTagFacade;
 import facades.RoleFacade;
+import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
@@ -33,16 +37,29 @@ import javax.servlet.http.HttpSession;
  * @author nikita
  */
 @WebServlet(name = "ManagerServlet", urlPatterns = {
+    "/managerMode",
+    
     "/addProductForm",
     "/addProduct",
+    "/createProduct",
+    "/uploadForm",
     
     "/changeProductForm",
     "/changeProduct",
     
-    "/createProduct",
+    
+    "/addTagForm",
+    "/addTag",
+    
+    "/changeProductTagsForm",
+    "/changeProductTags",
+    
+    "/changeTagForm",
+    "/changeTag",
+    
     "/users",
-    "/managerMode",
-    "/uploadForm",
+    
+    "/histories",
 })
 public class ManagerServlet extends HttpServlet {
     @EJB
@@ -53,6 +70,12 @@ public class ManagerServlet extends HttpServlet {
     private UserRolesFacade userRolesFacade;
     @EJB
     private PictureFacade pictureFacade;
+    @EJB
+    private TagFacade tagFacade;
+    @EJB
+    private ProductTagFacade productTagFacade;
+    @EJB 
+    private HistoryFacade historyFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -89,6 +112,17 @@ public class ManagerServlet extends HttpServlet {
         
         switch (path) {
             case "/addProductForm":{
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
+                break;
+            }
+            case "/createProduct":{
+                request.setAttribute("activeCreateProduct", "true");
+                List<Picture> listPictures = pictureFacade.findAll();
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                request.setAttribute("listPictures", listPictures);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                 break;
             }
@@ -97,6 +131,7 @@ public class ManagerServlet extends HttpServlet {
                 String pricestr = request.getParameter("price");
                 String amountstr = request.getParameter("amount");
                 String pictureId = request.getParameter("pictureId");
+                String tagId = request.getParameter("tagId");
                 if("".equals(name) || name == null 
                         || "".equals(pricestr) || pricestr == null
                         || "".equals(amountstr) || amountstr == null
@@ -104,6 +139,9 @@ public class ManagerServlet extends HttpServlet {
                     request.setAttribute("info", "INCORRECT");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                     break;
+                }
+                if("".equals(tagId) || tagId == null){
+                    Tag tag = tagFacade.findByName("default");
                 }
                 Picture pic = pictureFacade.find(Long.parseLong(pictureId));
                 Product product = new Product(name,Integer.parseInt(amountstr),Integer.parseInt(pricestr),pic);
@@ -121,6 +159,47 @@ public class ManagerServlet extends HttpServlet {
                 List<User> listUsers = userFacade.findAll();
                 request.setAttribute("listUsers", listUsers);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("users")).forward(request, response);
+                break;
+            }
+            case "/changeProductForm":{
+                List<Product> listProducts = productFacade.findAll();
+                request.setAttribute("listProducts", listProducts);
+                
+                request.setAttribute("adminPanel", "true");
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                Map<Product,List<Tag>> productsMap = new HashMap<>();
+                for(Product p : listProducts){
+                    productsMap.put(p, productTagFacade.getRoles(p));
+                }
+                request.setAttribute("ptoductsMap", productsMap);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProductForm")).forward(request, response);
+                break;
+            }
+            case "changeProductTagsForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProductTagsForm")).forward(request, response);
+                break;
+            }
+            case "changeProductTags":{
+                String tagId = request.getParameter("tagId");
+                String productId = request.getParameter("productId");
+                String changeTag = request.getParameter("changeTag");
+                if("".equals(tagId) || tagId == null
+                        || "".equals(productId) || productId == null){
+                    request.setAttribute("tagId", tagId);
+                    request.setAttribute("productId", productId);
+                    request.setAttribute("info", "Выберите все поля");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
+                }
+                Tag t = tagFacade.find(Long.parseLong(tagId));
+                Product p = productFacade.find(Long.parseLong(productId));
+                if("0".equals(changeTag)){
+                    productTagFacade.setTagToProduct(t,p);
+                }else if("1".equals(changeTag)){
+                    productTagFacade.removeTagFromProduct(t,p);
+                }
+                request.setAttribute("info", "Тэг назначен");
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
                 break;
             }
             case "/changeProduct":{
@@ -159,45 +238,27 @@ public class ManagerServlet extends HttpServlet {
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
                 break;
             }
-            case "/changeProductForm":{
-                List<Product> listProducts = productFacade.findAll();
-                request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProductForm")).forward(request, response);
-                break;
-            }
             case "/uploadForm":{
-                
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("uploadForm")).forward(request, response);
                 break;
             }
-            case "/createProduct":{
-                request.setAttribute("activeCreateProduct", "true");
-                List<Picture> listPictures = pictureFacade.findAll();
-                request.setAttribute("listPictures", listPictures);
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
+            
+            case "/addTagForm":{
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagForm")).forward(request, response);
                 break;
             }
-            case "/addTagsForm":{
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagsForm")).forward(request, response);
+            case "/addTag":{
+                
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
                 break;
             }
-            case "/addTags":{
+            case "/histories":{
+                List<History> listHistories = historyFacade.findAll();
+                request.setAttribute("listHistories", listHistories);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("hisories")).forward(request, response);
                 break;
             }
-            case "/addTagsToProductForm":{
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagsToProductForm")).forward(request, response);
-                break;
-            }
-            case "/addTagsToProduct":{
-                break;
-            }
-            case "/changeTagsForm":{
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeTagsForm")).forward(request, response);
-                break;
-            }
-            case "/changeTags":{
-                break;
-            }
+
 
 
             

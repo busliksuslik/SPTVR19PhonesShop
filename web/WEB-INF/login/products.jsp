@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<h3 class="w-100 text-center  my-5">Продукты:</h3>
+<h3 class="w-100 text-center  my-5" style = "text-align: center;">Продукты:</h3>
 <div class="w-100 d-flex justify-content-center">
     <c:forEach var="product" items="${listProducts}">
       <div class="card m-2" style="min-width: 12rem;">

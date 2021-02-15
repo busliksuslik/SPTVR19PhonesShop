@@ -1,7 +1,7 @@
 <%-- 
-    Document   : addTagsToUser
-    Created on : Feb 11, 2021, 12:55:20 PM
-    Author     : user
+    Document   : changeProductTagsForm
+    Created on : 15.02.2021, 23:29:39
+    Author     : nikita
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

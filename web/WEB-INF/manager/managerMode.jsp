@@ -18,7 +18,9 @@
             <li><a href="changeProductForm">change product</li>
             <li><a href="users">users</a></li>
             <li><a href="histories">histories</a></li>
-            <li><a href="adminMode">admin mode</a></li>
+            <li><a href="addTagForm">add tag</a></li>
+            <li><a href="changeProductTagsForm">change product tag</a></li>
+            <li><a href="changeTagForm">change tag</a></li>
         </ul>
     </body>
 </html>

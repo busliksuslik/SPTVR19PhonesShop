@@ -12,7 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <form action = "createMoney" method="POST">
+        <form action = "addMoney" method="POST">
             <input placeholder="Money" name = "money"value="${money}"><br>
             <input style="" type="submit">
         </form>

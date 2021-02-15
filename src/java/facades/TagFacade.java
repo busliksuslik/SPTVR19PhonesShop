@@ -28,5 +28,15 @@ public class TagFacade extends AbstractFacade<Tag> {
     public TagFacade() {
         super(Tag.class);
     }
+    public Tag findByName(String name) {
+        try {
+            return (Tag) em.createQuery("SELECT t FROM Tag t WHERE t.name = :name")
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
     
 }

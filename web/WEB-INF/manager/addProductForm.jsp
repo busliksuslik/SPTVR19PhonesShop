@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-        <h3 class="w-100 text-center  my-5">Добавить книгу</h3>
+        <h3 class="w-100 text-center  my-5">Добавить продукт</h3>
         <div class="" style="width: 50rem; margin: 0 auto">
             <a class="btn btn-primary my-2" href="uploadForm">Загрузить картинку</a>
             <form action="addProduct" method="POST">
@@ -36,6 +36,17 @@
                             <option value="">Выберите картинку</option>
                             <c:forEach var="picture" items="${listPictures}">
                                 <option value="${picture.id}">${picture.description}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label for="tag" class="col-sm-3 col-form-label">Тэг </label>
+                    <div class="col-sm-9">
+                        <select class="form-select" name="tagId">
+                            <option value="">Выберите тэг</option>
+                            <c:forEach var="tag" items="${listTags}">
+                                <option value="${tag.id}">${tag.name}</option>
                             </c:forEach>
                         </select>
                     </div>

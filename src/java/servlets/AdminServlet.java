@@ -5,6 +5,7 @@
  */
 package servlets;
 
+import entites.History;
 import entites.Role;
 import entites.User;
 import facades.HistoryFacade;
@@ -31,14 +32,13 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "AdminServlet", urlPatterns = {
     "/adminMode",
-    "/changeUserProperties",
+    "/changeUserPropertiesForm",
     "/setRole",
 })
 public class AdminServlet extends HttpServlet {
     @EJB 
     private ProductFacade productFacade;
-    @EJB 
-    private HistoryFacade historyFacade;
+    
     @EJB
     private UserFacade userFacade;
     @EJB private UserRolesFacade userRolesFacade;
@@ -80,7 +80,7 @@ public class AdminServlet extends HttpServlet {
             case "/adminMode":{
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("adminMode")).forward(request, response);
             }
-            case "/changeUserProperties":
+            case "/changeUserPropertiesForm":
                 request.setAttribute("adminPanel", "true");
                 List<Role> listRoles = roleFacade.findAll();
                 request.setAttribute("listRoles", listRoles);
@@ -90,7 +90,7 @@ public class AdminServlet extends HttpServlet {
                     usersMap.put(u, userRolesFacade.getRoles(u));
                 }
                 request.setAttribute("usersMap", usersMap);
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserProperties")).forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserPropertiesForm")).forward(request, response);
                 break;
             case "/setRole":
                 String roleId = request.getParameter("roleId");
@@ -113,6 +113,7 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("info", "Роль назначена");
                 request.getRequestDispatcher("/adminMode").forward(request, response);
                 break;
+                
         }
     }
 

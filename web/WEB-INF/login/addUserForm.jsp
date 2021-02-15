@@ -12,8 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1 style = "color: #FF00FF; font-family: comic sans ms;"> Add user</h1>
-        <form action = "createUser" method="POST">
+        <h1 style = "text-align: center;"> Add user</h1>
+        <form action = "createUser" method="POST" style = "text-align: center;">
             <input placeholder="Name" name="name" value="${name}"><br>
             <input placeholder="Password" name = "password"value="${password}"><br>
             <input style="" type="submit">

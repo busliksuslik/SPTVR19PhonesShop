@@ -7,11 +7,13 @@ package servlets;
 
 import entites.Product;
 import entites.Role;
+import entites.Tag;
 import entites.User;
 import entites.UserRoles;
-import facades.HistoryFacade;
+
 import facades.ProductFacade;
 import facades.RoleFacade;
+import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
@@ -32,7 +34,9 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "LoginServlet",loadOnStartup = 1, urlPatterns = {
     "/loginForm",
     "/login",
+    
     "/logout",
+    
     "/addUserForm",
     "/products",
     "/createUser",
@@ -43,17 +47,21 @@ public class LoginServlet extends HttpServlet {
     @EJB
     private UserFacade userFacade;
     @EJB
-    private HistoryFacade historyFacade;
-    @EJB
     private UserRolesFacade userRolesFacade;
     @EJB
     private RoleFacade roleFacade;
+    @EJB
+    private TagFacade tagFacade;
     
     public static final ResourceBundle pathToJsp = ResourceBundle.getBundle("property.pathToJsp");
 
     @Override
     public void init() throws ServletException {
         super.init();
+        if(tagFacade.findAll().isEmpty()) {
+            Tag tag = new Tag("other");
+            tagFacade.create(tag);
+        }
         if(userFacade.findAll().size() > 0) return;
         
         User user = new User("admin","admin");
@@ -76,6 +84,9 @@ public class LoginServlet extends HttpServlet {
         
         userRoles = new UserRoles(user,role);
         userRolesFacade.create(userRoles);
+        
+        Tag tag = new Tag("other");
+        tagFacade.create(tag);
     }
 
     /**

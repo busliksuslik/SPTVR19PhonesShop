@@ -12,7 +12,7 @@
         <title>login</title>
     </head>
     <body>
-        <form action = "login" method="POST">
+        <form action = "login" method="POST" style = "text-align: center;">
             <input placeholder="name" name="name" value="${name}"><br>
             <input type="password" placeholder="Password" name = "password" value="${password}"><br>
             <input type="submit">
