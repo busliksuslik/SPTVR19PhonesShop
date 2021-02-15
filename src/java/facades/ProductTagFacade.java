@@ -43,23 +43,13 @@ public class ProductTagFacade extends AbstractFacade<ProductTag> {
         }
     }
 
-    public List<Tag> getRoles(Product p) {
-        try {
-            return em.createQuery("SELECT pt.name FROM ProductTag pt WHERE pt.product = :product")
-                    .setParameter("product", p)
-                    .getResultList();
-            } catch (Exception e) {
-                return (List<Tag>) new ArrayList<Tag>();
-            }
-        }
-
     public void setTagToProduct(Tag t, Product p) {
         if(!this.isTag(t.getName(), p)){
             ProductTag pt = new ProductTag(p, t);
             this.create(pt);
         }
     }
-    public void removeRoleFromUser(Product p, Tag t) {
+    public void removeTagFromUser(Product p, Tag t) {
         if(this.isTag(t.getName(), p)){
             em.createQuery("DELETE FROM ProductTag pt WHERE pt.product = :product AND pt.tag = :tag")
                     .setParameter("product", p)

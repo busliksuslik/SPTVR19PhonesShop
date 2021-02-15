@@ -12,12 +12,15 @@ import entites.User;
 import entites.UserRoles;
 
 import facades.ProductFacade;
+import facades.ProductTagFacade;
 import facades.RoleFacade;
 import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -52,6 +55,8 @@ public class LoginServlet extends HttpServlet {
     private RoleFacade roleFacade;
     @EJB
     private TagFacade tagFacade;
+    @EJB
+    private ProductTagFacade productTagFacade;
     
     public static final ResourceBundle pathToJsp = ResourceBundle.getBundle("property.pathToJsp");
 
@@ -162,6 +167,15 @@ public class LoginServlet extends HttpServlet {
             case "/products":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
+                
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                
+                Map<Product,List<Tag>> productMap = new HashMap<>();
+                for(Product p : listProducts){
+                    productMap.put(p, productTagFacade.findTags(p));
+                }
+                request.setAttribute("productMap", productMap);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("products")).forward(request, response);
                 break;
             }

@@ -21,6 +21,7 @@
             <li><a href="addTagForm">add tag</a></li>
             <li><a href="changeProductTagsForm">change product tag</a></li>
             <li><a href="changeTagForm">change tag</a></li>
+            <li><a href="adminMode">adminMode</a></li>
         </ul>
     </body>
 </html>

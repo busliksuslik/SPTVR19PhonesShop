@@ -11,13 +11,29 @@
     <body>
         <h1 style = "color: #FF00FF; font-family: comic sans ms;"> Add History</h1>
         ${info}
-        <label for="books">Choose a book:</label>
-        <form action = "createHistory" method="POST">
-            <select name="product" size = "10">
-                <c:forEach var="product" items="${listProducts}">
-                    <option value="${product.id}">${product.name}|${product.price}$|${product.count}</option>
-                </c:forEach>
-            </select>
+        <label for="books">Выберете продукт:</label>
+        <form action = "addHistory" method="POST" style="text-align: center;">
+        <div class="w-100 d-flex justify-content-center">
+            <c:forEach var="entry" items="${productMap}">
+                <div class="card m-2" style="min-width: 12rem;">
+                    <img src="insertFile/${entry.key.picture.path}"  class="card-img-top" alt="..." style="max-width: 12rem; max-height: 15rem">
+                    <div class="card-body">
+                      <h5 class="card-title">${entry.key.name}</h5>
+                      <p class="card-text">${entry.key.price}</p>
+                      <p class="card-text">${entry.key.count}</p>
+                      <p class="card-text"><c:forEach var="tag" items="${entry.value}"><span>${tag.name}</span> <br></c:forEach></p>
+                    </div>
+                    <div class="row w-100">
+                        <div class="col text-end">
+                            <input class="form-check-input" name="product" type="radio" value="${entry.key.id}">
+                        </div>
+                        <div class="col  text-start">
+                            Этот
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
             <input placeholder="Count" name = "count"value="${count}"><br>
             <input style="" type="submit">
         </form>

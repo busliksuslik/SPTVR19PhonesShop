@@ -15,7 +15,7 @@
                 Пользователь:
             </div>
             <div class="col">
-                <select name="userId">
+                <select name="userId" >
                     <option value="">Выберите пользователя</option>
                     <c:forEach var="entry" items="${usersMap}">
                         <option value="${entry.key.id}" <c:if test="${userId eq entry.key.id}"> selected </c:if>>

@@ -9,15 +9,20 @@ package servlets;
 
 import entites.History;
 import entites.Product;
+import entites.Tag;
 import entites.User;
 import facades.HistoryFacade;
 import facades.ProductFacade;
+import facades.ProductTagFacade;
 import facades.RoleFacade;
+import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -51,6 +56,10 @@ public class UserServlet extends HttpServlet {
     private UserRolesFacade userRolesFacade;
     @EJB
     private RoleFacade roleFacade;
+    @EJB
+    private TagFacade tagFacade;
+    @EJB
+    private ProductTagFacade productTagFacade;
     
 
     /**
@@ -91,22 +100,48 @@ public class UserServlet extends HttpServlet {
             case "/addHistoryForm":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
+
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                
+                Map<Product,List<Tag>> productMap = new HashMap<>();
+                for(Product p : listProducts){
+                    productMap.put(p, productTagFacade.findTags(p));
+                }
+                request.setAttribute("productMap", productMap);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                 break;
             }
             case "/addHistory":{
                 String productstr = request.getParameter("product");
                 String count = request.getParameter("count");
-                String namestr = request.getParameter("name");
-                String passstr = request.getParameter("password");
+
                 Product product = productFacade.find(Long.parseLong(productstr));
                 user = (User) session.getAttribute("user");
                 if (product.getCount() < Integer.parseInt(count)){
+                    List<Product> listProducts = productFacade.findAll();
+                    request.setAttribute("listProducts", listProducts);
+                    List<Tag> listTags = tagFacade.findAll();
+                    request.setAttribute("listTags", listTags);
+                    Map<Product,List<Tag>> productMap = new HashMap<>();
+                    for(Product p : listProducts){
+                        productMap.put(p, productTagFacade.findTags(p));
+                    }
+                    request.setAttribute("productMap", productMap);
                     request.setAttribute("info","Недостаточно товара");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                     break;
                 }
                 if (user.getMoney() < product.getPrice()*Integer.parseInt(count)){
+                    List<Product> listProducts = productFacade.findAll();
+                    request.setAttribute("listProducts", listProducts);
+                    List<Tag> listTags = tagFacade.findAll();
+                    request.setAttribute("listTags", listTags);
+                    Map<Product,List<Tag>> productMap = new HashMap<>();
+                    for(Product p : listProducts){
+                        productMap.put(p, productTagFacade.findTags(p));
+                    }
+                    request.setAttribute("productMap", productMap);
                     request.setAttribute("info","Недостаточно денег");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                     break;

@@ -165,22 +165,25 @@ public class ManagerServlet extends HttpServlet {
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
                 
-                request.setAttribute("adminPanel", "true");
-                List<Tag> listTags = tagFacade.findAll();
-                request.setAttribute("listTags", listTags);
-                Map<Product,List<Tag>> productsMap = new HashMap<>();
-                for(Product p : listProducts){
-                    productsMap.put(p, productTagFacade.getRoles(p));
-                }
-                request.setAttribute("ptoductsMap", productsMap);
+                
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProductForm")).forward(request, response);
                 break;
             }
-            case "changeProductTagsForm":{
+            case "/changeProductTagsForm":{
+                request.setAttribute("adminPanel", "true");
+                List<Product> listProducts = productFacade.findAll();
+                request.setAttribute("listProducts", listProducts);
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                Map<Product,List<Tag>> productMap = new HashMap<>();
+                for(Product p : listProducts){
+                    productMap.put(p, productTagFacade.findTags(p));
+                }
+                request.setAttribute("productMap", productMap);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeProductTagsForm")).forward(request, response);
                 break;
             }
-            case "changeProductTags":{
+            case "/changeProductTags":{
                 String tagId = request.getParameter("tagId");
                 String productId = request.getParameter("productId");
                 String changeTag = request.getParameter("changeTag");
@@ -248,14 +251,26 @@ public class ManagerServlet extends HttpServlet {
                 break;
             }
             case "/addTag":{
-                
+                String name = request.getParameter("name");
+                if (name == null || "".equals(name)){
+                    request.setAttribute("info", "введите данные");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagForm")).forward(request, response);
+                    break;
+                }
+                if(tagFacade.findByName(name) != null){
+                    request.setAttribute("info", "Такой тэг уже существует");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addTagForm")).forward(request, response);
+                    break;
+                }
+                Tag tag = new Tag(name);
+                tagFacade.create(tag);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
                 break;
             }
             case "/histories":{
                 List<History> listHistories = historyFacade.findAll();
                 request.setAttribute("listHistories", listHistories);
-                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("hisories")).forward(request, response);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("histories")).forward(request, response);
                 break;
             }
 
