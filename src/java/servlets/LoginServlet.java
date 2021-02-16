@@ -18,6 +18,7 @@ import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,9 +90,7 @@ public class LoginServlet extends HttpServlet {
         
         userRoles = new UserRoles(user,role);
         userRolesFacade.create(userRoles);
-        
-        Tag tag = new Tag("other");
-        tagFacade.create(tag);
+
     }
 
     /**
@@ -170,10 +169,11 @@ public class LoginServlet extends HttpServlet {
                 
                 List<Tag> listTags = tagFacade.findAll();
                 request.setAttribute("listTags", listTags);
-                
+                List<Tag> tags = new ArrayList<Tag>();
                 Map<Product,List<Tag>> productMap = new HashMap<>();
                 for(Product p : listProducts){
-                    productMap.put(p, productTagFacade.findTags(p));
+                    tags = productTagFacade.findTags(p);
+                    productMap.put(p, tags);
                 }
                 request.setAttribute("productMap", productMap);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("products")).forward(request, response);

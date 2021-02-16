@@ -34,10 +34,9 @@ public class ProductTagFacade extends AbstractFacade<ProductTag> {
     }
     public List<Tag> findTags(Product product) {
         try {
-            List<Tag> listTag = (List<Tag>) em.createQuery("SELECT productTag FROM ProductTag pt WHERE pt.product = :name ")
-                    .setParameter("name", product)
+            return (List<Tag>) em.createQuery("SELECT pt.tag FROM ProductTag pt WHERE pt.product = :product")
+                    .setParameter("product", product)
                     .getResultList();
-            return listTag;
         } catch (Exception e) {
             return null;
         }
@@ -49,18 +48,11 @@ public class ProductTagFacade extends AbstractFacade<ProductTag> {
             this.create(pt);
         }
     }
-    public void removeTagFromUser(Product p, Tag t) {
-        if(this.isTag(t.getName(), p)){
-            em.createQuery("DELETE FROM ProductTag pt WHERE pt.product = :product AND pt.tag = :tag")
-                    .setParameter("product", p)
-                    .setParameter("tag", t)
-                    .executeUpdate();
-        }
-    }
+
 
     private boolean isTag(String name, Product p) {
         try {
-            ProductTag productTag = (ProductTag) em.createQuery("SELECT productTag FROM ProductTag pt WHERE pt.role.name = :name AND pt.product = :product")
+            ProductTag productTag = (ProductTag) em.createQuery("SELECT productTag FROM ProductTag productTag WHERE productTag.tag.name = :name AND productTag.product = :product")
                     .setParameter("name", name)
                     .setParameter("product", p)
                     .getSingleResult();

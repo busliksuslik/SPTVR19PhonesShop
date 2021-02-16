@@ -13,6 +13,7 @@
     </head>
     <body>
         <h1>Manager mode</h1>
+        <h3>${info}</h3>
         <ul>
             <li><a href="addProductForm">add product</a></li>
             <li><a href="changeProductForm">change product</li>

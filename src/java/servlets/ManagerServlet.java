@@ -8,6 +8,7 @@ package servlets;
 import entites.History;
 import entites.Picture;
 import entites.Product;
+import entites.ProductTag;
 import entites.Role;
 import entites.Tag;
 import entites.User;
@@ -140,8 +141,9 @@ public class ManagerServlet extends HttpServlet {
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                     break;
                 }
+                Tag tag = tagFacade.findByName("default");;
                 if("".equals(tagId) || tagId == null){
-                    Tag tag = tagFacade.findByName("default");
+                    tag = tagFacade.findByName("default");
                 }
                 Picture pic = pictureFacade.find(Long.parseLong(pictureId));
                 Product product = new Product(name,Integer.parseInt(amountstr),Integer.parseInt(pricestr),pic);
@@ -151,8 +153,11 @@ public class ManagerServlet extends HttpServlet {
                     break;
                 }
                 productFacade.create(product);
+                ProductTag pt = new ProductTag(product,tag);
+                productTagFacade.create(pt);
                 request.setAttribute("info", "продукт Создан");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("managerMode")).forward(request, response);
+                
                 break;
             }
             case "/users":{

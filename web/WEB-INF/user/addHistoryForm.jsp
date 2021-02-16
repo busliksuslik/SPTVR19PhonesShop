@@ -25,7 +25,7 @@
                     </div>
                     <div class="row w-100">
                         <div class="col text-end">
-                            <input class="form-check-input" name="product" type="radio" value="${entry.key.id}">
+                            <input class="form-check-input" name="product" type="radio" value="${entry.key.id}" <c:if test="${entry.key.id eq 1}"> selected </c:if>>
                         </div>
                         <div class="col  text-start">
                             Этот

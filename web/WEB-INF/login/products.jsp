@@ -19,6 +19,7 @@
               <p class="card-text"><c:forEach var="tag" items="${entry.value}"><span>${tag.name}</span> <br></c:forEach></p>
             </div>
         </div>
+            
     </c:forEach>
     <!--<c:forEach var="product" items="${listProducts}">
       <div class="card m-2" style="min-width: 12rem;">
