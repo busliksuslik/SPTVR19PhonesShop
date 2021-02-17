@@ -70,7 +70,7 @@ public class UploadServlet extends HttpServlet {
             request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
-        String uploadFolder = "D:\\SPTVR19\\UploadFolder";
+        String uploadFolder = "C:\\UploadFolder";
        List<Part> fileParts = request
                .getParts()
                .stream()

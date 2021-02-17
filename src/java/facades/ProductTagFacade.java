@@ -34,9 +34,10 @@ public class ProductTagFacade extends AbstractFacade<ProductTag> {
     }
     public List<Tag> findTags(Product product) {
         try {
-            return (List<Tag>) em.createQuery("SELECT pt.tag FROM ProductTag pt WHERE pt.product = :product")
+            List<Tag> tags = (List<Tag>) em.createQuery("SELECT pt.tag FROM ProductTag pt WHERE pt.product = :product")
                     .setParameter("product", product)
                     .getResultList();
+            return tags;
         } catch (Exception e) {
             return null;
         }

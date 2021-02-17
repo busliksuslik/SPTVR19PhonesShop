@@ -59,19 +59,19 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if(session == null){
             request.setAttribute("info", "У вас нет права для этого ресурса. Войдите в систему");
-            request.getRequestDispatcher("/showLoginForm").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return;
         }
         User user = (User) session.getAttribute("user");
         if(user == null){
             request.setAttribute("info", "У вас нет права для этого ресурса. Войдите в систему");
-            request.getRequestDispatcher("/showLoginForm").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return;
         }
         boolean isRole = userRolesFacade.isRole("ADMIN", user);
         if(!isRole){
             request.setAttribute("info", "У вас нет права для этого ресурса. Войдите в систему с соответствующими правами");
-            request.getRequestDispatcher("/showLoginForm").forward(request, response);
+            request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return;
         }
         String path = request.getServletPath();

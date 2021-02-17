@@ -141,9 +141,11 @@ public class ManagerServlet extends HttpServlet {
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);
                     break;
                 }
-                Tag tag = tagFacade.findByName("default");;
+                Tag tag = tagFacade.findByName("other");
                 if("".equals(tagId) || tagId == null){
-                    tag = tagFacade.findByName("default");
+                    tag = tagFacade.findByName("other");
+                } else {
+                    tag = tagFacade.find(Long.parseLong(tagId));
                 }
                 Picture pic = pictureFacade.find(Long.parseLong(pictureId));
                 Product product = new Product(name,Integer.parseInt(amountstr),Integer.parseInt(pricestr),pic);
