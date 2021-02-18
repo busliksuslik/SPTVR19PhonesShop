@@ -1,13 +1,18 @@
 <%-- any content can be specified here e.g.: --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" %>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <!-- CSS only -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-        <title>LOL och smesno</title>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    
+         <title>LOL och smesno</title>
     </head>
     <body> 
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+        
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.jsp">Magaz</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,21 +27,35 @@
       <li class="nav-item">
         <a class="nav-link" href="addUserForm">Registration</a>
       </li>
+      <c:if test="${isCustomer eq 'TRUE'}">
       <li class="nav-item">
         <a class="nav-link" href="addMoneyForm">add Money</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="addHistoryForm">buy</a>
       </li>
+      </c:if>
+      <c:if test="${not((isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE'))}">
       <li class="nav-item">
         <a class="nav-link" href="loginForm">Log in</a>
       </li>
+      </c:if>
+      <c:if test="${(isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE')}">
       <li class="nav-item">
         <a class="nav-link" href="logout">log out</a>
       </li>
+      </c:if>
+      <c:if test="${isManager eq 'TRUE'}">
       <li class="nav-item">
         <a class="nav-link" href="managerMode">manager mode</a>
       </li>
+      </c:if>
+      <c:if test="${isAdmin eq 'TRUE'}">
+      <li class="nav-item">
+        <a class="nav-link" href="adminMode">admin mode</a>
+      </li>
+      </c:if>
+      
     </ul>
   </div>
 </nav>

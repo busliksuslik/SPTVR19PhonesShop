@@ -122,8 +122,21 @@ public class LoginServlet extends HttpServlet {
                     break;
                 } 
                 HttpSession session = request.getSession(true);
-                session.setAttribute("user", userFacade.userFind(name, pass));
+                User user = userFacade.userFind(name, pass);
+                session.setAttribute("user",user);
                 request.setAttribute("info","success");
+                if (userRolesFacade.isRole("CUSTOMER", user)){
+                    session.setAttribute("isCustomer", "TRUE");
+                    request.setAttribute("isCustomer", session.getAttribute("isCustomer"));
+                }
+                if (userRolesFacade.isRole("MANAGER", user)){
+                    session.setAttribute("isManager", "TRUE");
+                    request.setAttribute("isManager", session.getAttribute("isManager"));
+                }
+                if (userRolesFacade.isRole("ADMIN", user)){
+                    session.setAttribute("isAdmin", "TRUE");
+                    request.setAttribute("isAdmin", session.getAttribute("isAdmin"));
+                }
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }

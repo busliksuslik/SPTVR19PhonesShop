@@ -93,6 +93,7 @@ public class UserServlet extends HttpServlet {
             request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
+        request.setAttribute("isCustomer", session.getAttribute("isCustomer"));
         String path = request.getServletPath();
         
         switch (path) {

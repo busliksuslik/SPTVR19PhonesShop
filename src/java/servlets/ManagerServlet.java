@@ -109,6 +109,8 @@ public class ManagerServlet extends HttpServlet {
             request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return ;
         }
+        
+        request.setAttribute("isManager", session.getAttribute("isManager"));
         String path = request.getServletPath();
         
         switch (path) {
@@ -148,7 +150,11 @@ public class ManagerServlet extends HttpServlet {
                     tag = tagFacade.find(Long.parseLong(tagId));
                 }
                 Picture pic = pictureFacade.find(Long.parseLong(pictureId));
-                Product product = new Product(name,Integer.parseInt(amountstr),Integer.parseInt(pricestr),pic);
+                
+                Long pricel = Math.round(Double.parseDouble(pricestr)*100);
+                int priceint = pricel.intValue();
+                
+                Product product = new Product(name,Integer.parseInt(amountstr),priceint,pic);
                 if (productFacade.productExist(name,pricestr)){
                     request.setAttribute("info", "Такой продукт уже существует");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addProductForm")).forward(request, response);

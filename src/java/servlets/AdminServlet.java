@@ -74,6 +74,7 @@ public class AdminServlet extends HttpServlet {
             request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
             return;
         }
+        request.setAttribute("isAdmin", session.getAttribute("isAdmin"));
         String path = request.getServletPath();
         
         switch (path) {
@@ -84,7 +85,7 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("adminPanel", "true");
                 List<Role> listRoles = roleFacade.findAll();
                 request.setAttribute("listRoles", listRoles);
-                List<User> listUsers = userFacade.findAll();
+                List<User> listUsers = userFacade.findAllExceptAdmin();
                 Map<User,List<Role>> usersMap = new HashMap<>();
                 for(User u : listUsers){
                     usersMap.put(u, userRolesFacade.getRoles(u));
