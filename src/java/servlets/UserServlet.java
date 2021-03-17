@@ -135,46 +135,7 @@ public class UserServlet extends HttpServlet {
                 } 
                 session.setAttribute("cart", cart);
                 
-                String productstr = request.getParameter("product");
-                String count = request.getParameter("count");
-
-                Product product = productFacade.find(Long.parseLong(productstr));
-                user = (User) session.getAttribute("user");
-                if (product.getCount() < Integer.parseInt(count)){
-                    listProducts = productFacade.findAll();
-                    request.setAttribute("listProducts", listProducts);
-                    List<Tag> listTags = tagFacade.findAll();
-                    request.setAttribute("listTags", listTags);
-                    Map<Product,List<Tag>> productMap = new HashMap<>();
-                    for(Product p : listProducts){
-                        productMap.put(p, productTagFacade.findTags(p));
-                    }
-                    request.setAttribute("productMap", productMap);
-                    request.setAttribute("info","Недостаточно товара");
-                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
-                    break;
-                }
-                if (user.getMoney() < product.getPrice()*Integer.parseInt(count)){
-                    listProducts = productFacade.findAll();
-                    request.setAttribute("listProducts", listProducts);
-                    List<Tag> listTags = tagFacade.findAll();
-                    request.setAttribute("listTags", listTags);
-                    Map<Product,List<Tag>> productMap = new HashMap<>();
-                    for(Product p : listProducts){
-                        productMap.put(p, productTagFacade.findTags(p));
-                    }
-                    request.setAttribute("productMap", productMap);
-                    request.setAttribute("info","Недостаточно денег");
-                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
-                    break;
-                }
-                user.setMoney(user.getMoney() - product.getPrice()*Integer.parseInt(count));
-                product.setCount(product.getCount()-Integer.parseInt(count));
-                History history = new History(user, product, new GregorianCalendar().getTime(),Integer.parseInt(count));
-                historyFacade.create(history);
-                productFacade.edit(product);
-                userFacade.edit(user);
-                request.setAttribute("info","Куплено");
+                request.setAttribute("info","Добавлено в корзину");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
@@ -198,6 +159,7 @@ public class UserServlet extends HttpServlet {
             }
             case"/cart":{
                 request.setAttribute("cart", session.getAttribute("cart"));
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("cart")).forward(request, response);
             }
             case"buy":{
                 

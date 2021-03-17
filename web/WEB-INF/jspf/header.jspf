@@ -55,6 +55,11 @@
         <a class="nav-link" href="adminMode">Admin mode</a>
       </li>
       </c:if>
+      <c:if test="${(isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE')}">
+      <li class="nav-item">
+        <a class="nav-link" href="cart">Cart</a>
+      </li>
+      </c:if>
       
     </ul>
   </div>
