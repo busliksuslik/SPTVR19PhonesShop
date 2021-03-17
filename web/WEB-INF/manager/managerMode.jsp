@@ -14,15 +14,12 @@
     <body>
         <h1>Manager mode</h1>
         <h3>${info}</h3>
-        <ul>
-            <li><a href="addProductForm">add product</a></li>
-            <li><a href="changeProductForm">change product</li>
-            <li><a href="users">users</a></li>
-            <li><a href="histories">histories</a></li>
-            <li><a href="addTagForm">add tag</a></li>
-            <li><a href="changeProductTagsForm">change product tag</a></li>
-            <li><a href="changeTagForm">change tag</a></li>
-            <li><a href="adminMode">adminMode</a></li>
-        </ul>
+        <a class="btn btn-primary" href="addProductForm" role="button">Add product</a>
+        <a class="btn btn-primary" href="changeProductForm" role="button">Change product</a>
+        <a class="btn btn-primary" href="users" role="button">users</a>
+        <a class="btn btn-primary" href="histories" role="button">histories</a>
+        <a class="btn btn-primary" href="addTagForm" role="button">Add tag</a>
+        <a class="btn btn-primary" href="changeProductTagsForm" role="button">Change product tag</a>
+        <a class="btn btn-primary" href="changeTagForm" role="button">Change tag</a>
     </body>
 </html>

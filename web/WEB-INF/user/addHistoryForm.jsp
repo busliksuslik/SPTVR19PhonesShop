@@ -21,11 +21,11 @@
                       <h5 class="card-title">${entry.key.name}</h5>
                       <p class="card-text">Цена: ${entry.key.price/100}</p>
                       <p class="card-text">Кол-во: ${entry.key.count}</p>
-                      <p class="card-text"><c:forEach var="tag" items="${entry.value}"><span>${tag.name}</span> <br></c:forEach></p>
+                      <p class="card-text"><c:forEach var="tag" items="${entry.value.key}"><span>${tag.name}</span> <br></c:forEach></p>
                     </div>
                     <div class="row w-100">
                         <div class="col text-end">
-                            <input class="form-check-input" name="product" type="radio" value="${entry.key.id}" <c:if test="${entry.key.id eq 1}"> selected </c:if>>
+                            <input name="quantity" type="number" class="form-control" min="0" max="${entry.key.count}" value="${entry.value}">
                         </div>
                         <div class="col  text-start">
                             Этот

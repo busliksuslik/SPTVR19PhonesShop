@@ -19,10 +19,14 @@ import facades.TagFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static javafx.scene.input.KeyCode.T;
+import javafx.util.Pair;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,9 +42,10 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "UserServlet", urlPatterns = {
     "/addHistoryForm",
     "/addHistory",
-    
     "/addMoneyForm",
     "/addMoney",
+    "/cart",
+    "/buy",
     
     
     
@@ -105,22 +110,38 @@ public class UserServlet extends HttpServlet {
                 List<Tag> listTags = tagFacade.findAll();
                 request.setAttribute("listTags", listTags);
                 
-                Map<Product,List<Tag>> productMap = new HashMap<>();
+                Map<Product,Pair<List<Tag>,Integer>> productMap = new HashMap<>();
                 for(Product p : listProducts){
-                    productMap.put(p, productTagFacade.findTags(p));
+                    productMap.put(p,new Pair<>(productTagFacade.findTags(p),0));
                 }
                 request.setAttribute("productMap", productMap);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addHistoryForm")).forward(request, response);
                 break;
             }
             case "/addHistory":{
+                
+                //NOTE: product quantity doesn't connected to the product itself. Dangerous.
+                List<String> quantityStr = Arrays.asList(request.getParameterValues("quantity"));
+                List<Integer> quantity = new ArrayList<>();
+                
+                for (String q : quantityStr){
+                    quantity.add(Integer.parseInt(q));
+                }
+                Map<Product,Integer> cart = new HashMap<>();
+                List<Product> listProducts = productFacade.findAll();
+                for (int i = 0; i < listProducts.size(); i++){
+                    if (quantity.get(i) == 0){continue;}
+                    cart.put(listProducts.get(i), quantity.get(i));
+                } 
+                session.setAttribute("cart", cart);
+                
                 String productstr = request.getParameter("product");
                 String count = request.getParameter("count");
 
                 Product product = productFacade.find(Long.parseLong(productstr));
                 user = (User) session.getAttribute("user");
                 if (product.getCount() < Integer.parseInt(count)){
-                    List<Product> listProducts = productFacade.findAll();
+                    listProducts = productFacade.findAll();
                     request.setAttribute("listProducts", listProducts);
                     List<Tag> listTags = tagFacade.findAll();
                     request.setAttribute("listTags", listTags);
@@ -134,7 +155,7 @@ public class UserServlet extends HttpServlet {
                     break;
                 }
                 if (user.getMoney() < product.getPrice()*Integer.parseInt(count)){
-                    List<Product> listProducts = productFacade.findAll();
+                    listProducts = productFacade.findAll();
                     request.setAttribute("listProducts", listProducts);
                     List<Tag> listTags = tagFacade.findAll();
                     request.setAttribute("listTags", listTags);
@@ -174,6 +195,12 @@ public class UserServlet extends HttpServlet {
                 request.setAttribute("info", "деньги добавлены");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
+            }
+            case"/cart":{
+                request.setAttribute("cart", session.getAttribute("cart"));
+            }
+            case"buy":{
+                
             }
             
             

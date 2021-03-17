@@ -117,7 +117,7 @@ public class LoginServlet extends HttpServlet {
                 String name = request.getParameter("name");
                 String pass = request.getParameter("password");
                 if(!userFacade.userExist(name, pass)){
-                    request.setAttribute("info","Нет такого gjkmpjdfntkz");
+                    request.setAttribute("info","Нет такого пользователя");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
                     break;
                 } 
