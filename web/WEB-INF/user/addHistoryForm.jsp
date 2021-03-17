@@ -25,16 +25,12 @@
                     </div>
                     <div class="row w-100">
                         <div class="col text-end">
-                            <input name="quantity" type="number" class="form-control" min="0" max="${entry.key.count}" value="${entry.value}">
-                        </div>
-                        <div class="col  text-start">
-                            Этот
+                            <input name="quantity" type="number" class="form-control" min="0" max="${entry.key.count}" value="${entry.value.value}">
                         </div>
                     </div>
                 </div>
             </c:forEach>
         </div>
-            <input placeholder="Count" name = "count"value="${count}"><br>
             <input style="" type="submit">
         </form>
     </body>

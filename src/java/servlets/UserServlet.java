@@ -21,6 +21,7 @@ import facades.UserRolesFacade;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -151,18 +152,75 @@ public class UserServlet extends HttpServlet {
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("changeUserMoneyForm")).forward(request, response);
                     break;
                 }
-                user.setMoney(Integer.parseInt(moneystr)+user.getMoney());
+                Long moneyl = Math.round(Double.parseDouble(moneystr)*100);
+                int moneyint = moneyl.intValue();
+                user.setMoney(moneyint+user.getMoney());
                 userFacade.edit(user);
                 request.setAttribute("info", "деньги добавлены");
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
                 break;
             }
             case"/cart":{
+                if(session.getAttribute("cart") == null){
+                    request.setAttribute("info", "Вы ничего не купили");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("cart")).forward(request, response);
+                }
+                if (((Map)session.getAttribute("cart")).isEmpty()){
+                    request.setAttribute("info", "Вы ничего не купили");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("cart")).forward(request, response);
+                }
                 request.setAttribute("cart", session.getAttribute("cart"));
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("cart")).forward(request, response);
             }
-            case"buy":{
+            case"/buy":{
+                Map<Product,Integer> productsQuantity = (Map) session.getAttribute("cart");
+                List<String> quantityStr = Arrays.asList(request.getParameterValues("quantity"));
+                List<Product> products = Arrays.asList(productsQuantity.keySet().toArray(new Product[0]));
+                List<Integer> quantity = new ArrayList<>();
+                for(int i = 0; i < quantityStr.size(); i++){
+                    quantity.add(Integer.parseInt(quantityStr.get(i)));
+                }
+                for (int i = 0; i < quantity.size();i++){
+                    productsQuantity.put(products.get(i),quantity.get(i));
+                }
+                int price = 0;
                 
+                for (Product p : productsQuantity.keySet()){
+                    price+= p.getPrice()* productsQuantity.get(p);
+                }
+                
+                user = (User) session.getAttribute("user");
+                if (user.getMoney() < price){
+                    List<Product> listProducts = productFacade.findAll();
+                    request.setAttribute("listProducts", listProducts);
+                    List<Tag> listTags = tagFacade.findAll();
+                    request.setAttribute("listTags", listTags);
+                    Map<Product,List<Tag>> productMap = new HashMap<>();
+                    for(Product p : listProducts){
+                        productMap.put(p, productTagFacade.findTags(p));
+                    }
+                    request.setAttribute("productMap", productMap);
+                    request.setAttribute("info","Недостаточно денег");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("cart")).forward(request, response);
+                    break;
+                }
+                for(Product p : productsQuantity.keySet()){
+                    System.out.println(productsQuantity.get(p));
+                }
+                
+                
+                for(Product p : productsQuantity.keySet()){
+                    System.out.println(productsQuantity.get(p));
+                    historyFacade.create(new History(user, p, new GregorianCalendar().getTime(),productsQuantity.get(p)));
+                    p.setCount(p.getCount()-productsQuantity.get(p));
+                    productFacade.edit(p);
+                }
+                
+                user.setMoney(user.getMoney() - price);
+                userFacade.edit(user);
+                request.setAttribute("info","Куплено");
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
+                break;
             }
             
             
