@@ -44,6 +44,7 @@ import javax.servlet.http.HttpSession;
     "/addUserForm",
     "/products",
     "/createUser",
+    "/"
 })
 public class LoginServlet extends HttpServlet {
     @EJB
@@ -109,6 +110,22 @@ public class LoginServlet extends HttpServlet {
         String path = request.getServletPath();
         
         switch (path) {
+            case "/":{
+                List<Product> listProducts = productFacade.findAll();
+                request.setAttribute("listProducts", listProducts);
+                
+                List<Tag> listTags = tagFacade.findAll();
+                request.setAttribute("listTags", listTags);
+                List<Tag> tags ;
+                Map<Product,List<Tag>> productMap = new HashMap<>();
+                for(Product p : listProducts){
+                    tags = productTagFacade.findTags(p);
+                    productMap.put(p, tags);
+                }
+                request.setAttribute("productMap", productMap);
+                request.getRequestDispatcher(LoginServlet.pathToJsp.getString("index")).forward(request, response);
+                break;
+            }
             case "/loginForm":{
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
                 break;
