@@ -14,7 +14,7 @@
     <body>
         <h1>Admin mode</h1>
         <ul>
-            <li><a href="changeUserPropertiesForm">users roles</a></li>
+            <li><a href="changeUserPropertiesForm" id="changeUserPropertiesForm">users roles</a></li>
         </ul>
     </body>
 </html>

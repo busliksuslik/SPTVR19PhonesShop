@@ -61,6 +61,9 @@ import javax.servlet.http.HttpSession;
     "/users",
     
     "/histories",
+    
+    "/discountForm",
+    "/setDiscount",
 })
 public class ManagerServlet extends HttpServlet {
     @EJB
@@ -284,6 +287,13 @@ public class ManagerServlet extends HttpServlet {
                 List<History> listHistories = historyFacade.findAll();
                 request.setAttribute("listHistories", listHistories);
                 request.getRequestDispatcher(LoginServlet.pathToJsp.getString("histories")).forward(request, response);
+                break;
+            }
+            case "/discountForm":{
+                
+                break;
+            }
+            case "/setDiscount":{
                 break;
             }
 

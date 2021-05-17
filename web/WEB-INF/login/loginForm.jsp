@@ -13,10 +13,9 @@
     </head>
     <body>
         <form action = "login" method="POST" style = "text-align: center;">
-            <input placeholder="name" name="name" value="${name}"><br>
-            <input type="password" placeholder="Password" name = "password" value="${password}"><br>
-            <input type="submit">
+            <input placeholder="name" name="login" id="login" value="${name}"><br>
+            <input type="password" placeholder="Password" id="password" name = "password" value="${password}"><br>
+            <input id="submit" type="submit">
         </form>
-        <h1>${info}</h1>
     </body>
 </html>

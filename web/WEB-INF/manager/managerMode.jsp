@@ -13,7 +13,6 @@
     </head>
     <body>
         <h1>Manager mode</h1>
-        <h3>${info}</h3>
         <a class="btn btn-primary" href="addProductForm" role="button">Add product</a>
         <a class="btn btn-primary" href="changeProductForm" role="button">Change product</a>
         <a class="btn btn-primary" href="users" role="button">users</a>

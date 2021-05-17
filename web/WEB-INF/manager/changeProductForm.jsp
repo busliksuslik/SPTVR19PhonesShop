@@ -24,6 +24,5 @@
             <input placeholder="amount" name = "amount"value="${amount}"><br>
             <input style="" type="submit">
         </form>
-            ${info}
     </body>
 </html>

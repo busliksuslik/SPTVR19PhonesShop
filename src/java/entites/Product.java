@@ -6,12 +6,14 @@
 package entites;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -27,6 +29,13 @@ public class Product implements Serializable {
     private int price;
     @OneToOne
     private Picture picture;
+    
+    private int discount;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date discountStart;
+    private int discountDuration;
+    
+    
 
     public Product() {
     }
@@ -130,6 +139,30 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "Product{" + "id=" + id + ", name=" + name + ", count=" + count + ", price=" + price + ", picture=" + picture + '}';
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public Date getDiscountStart() {
+        return discountStart;
+    }
+
+    public void setDiscountStart(Date discountStart) {
+        this.discountStart = discountStart;
+    }
+
+    public int getDiscountDuration() {
+        return discountDuration;
+    }
+
+    public void setDiscountDuration(int discountDuration) {
+        this.discountDuration = discountDuration;
     }
 
     

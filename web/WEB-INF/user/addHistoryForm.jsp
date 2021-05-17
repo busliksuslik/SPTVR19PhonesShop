@@ -10,7 +10,6 @@
     </head>
     <body>
         <h1 style = "color: #FF00FF; font-family: comic sans ms;"> Add History</h1>
-        ${info}
         <label for="books">Выберете продукт:</label>
         <form action = "addHistory" method="POST" style="text-align: center;">
         <div class="w-100 d-flex justify-content-center">

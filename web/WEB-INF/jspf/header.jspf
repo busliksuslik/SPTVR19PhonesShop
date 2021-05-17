@@ -25,19 +25,19 @@
         <a class="nav-link" href="products">Products</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addUserForm">Registration</a>
+        <a class="nav-link" href="addUserForm" id="addUserForm">Registration</a>
       </li>
       <c:if test="${isCustomer eq 'TRUE'}">
       <li class="nav-item">
         <a class="nav-link" href="addMoneyForm">add Money</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="addHistoryForm">buy</a>
+        <a class="nav-link" href="addHistoryForm" id="addHistoryForm">buy</a>
       </li>
       </c:if>
       <c:if test="${not((isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE'))}">
       <li class="nav-item">
-        <a class="nav-link" href="loginForm">Log in</a>
+          <a class="nav-link" id="loginForm" href="loginForm">Log in</a>
       </li>
       </c:if>
       <c:if test="${(isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE')}">
@@ -52,15 +52,16 @@
       </c:if>
       <c:if test="${isAdmin eq 'TRUE'}">
       <li class="nav-item">
-        <a class="nav-link" href="adminMode">Admin mode</a>
+        <a class="nav-link" id="adminMode" href="adminMode">Admin mode</a>
       </li>
       </c:if>
       <c:if test="${(isCustomer eq 'TRUE') or (isManager eq 'TRUE') or (isAdmin eq 'TRUE')}">
       <li class="nav-item">
-        <a class="nav-link" href="cart">Cart</a>
+        <a class="nav-link" href="cart" id="cart">Cart</a>
       </li>
       </c:if>
       
     </ul>
   </div>
 </nav>
+<h1 id="info">${info}</h1>

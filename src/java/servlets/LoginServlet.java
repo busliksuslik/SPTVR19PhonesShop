@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import tools.EncryptPassword;
 
 /**
  *
@@ -44,7 +46,6 @@ import javax.servlet.http.HttpSession;
     "/addUserForm",
     "/products",
     "/createUser",
-    "/"
 })
 public class LoginServlet extends HttpServlet {
     @EJB
@@ -60,6 +61,9 @@ public class LoginServlet extends HttpServlet {
     @EJB
     private ProductTagFacade productTagFacade;
     
+    @Inject private EncryptPassword encryptPassword;
+    
+    
     public static final ResourceBundle pathToJsp = ResourceBundle.getBundle("property.pathToJsp");
 
     @Override
@@ -70,8 +74,9 @@ public class LoginServlet extends HttpServlet {
             tagFacade.create(tag);
         }
         if(userFacade.findAll().size() > 0) return;
-        
-        User user = new User("admin","admin");
+        String salt = encryptPassword.createSalt();
+        String password = encryptPassword.createHash("admin", salt);
+        User user = new User("admin",password,salt);
         userFacade.create(user);
         
         Role role = new Role("ADMIN");
@@ -110,7 +115,7 @@ public class LoginServlet extends HttpServlet {
         String path = request.getServletPath();
         
         switch (path) {
-            case "/":{
+            case "/index":{
                 List<Product> listProducts = productFacade.findAll();
                 request.setAttribute("listProducts", listProducts);
                 
@@ -131,15 +136,23 @@ public class LoginServlet extends HttpServlet {
                 break;
             }
             case "/login":{
-                String name = request.getParameter("name");
+                String name = request.getParameter("login");
                 String pass = request.getParameter("password");
-                if(!userFacade.userExist(name, pass)){
+                if(!userFacade.userExist(name)){
                     request.setAttribute("info","Нет такого пользователя");
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
                     break;
                 } 
                 HttpSession session = request.getSession(true);
-                User user = userFacade.userFind(name, pass);
+                User user = userFacade.userFind(name);
+                String salt = user.getSalt();
+                String encryptPwd = encryptPassword.createHash(pass, salt);
+                
+                if(!userFacade.userExist(name, encryptPwd)){
+                    request.setAttribute("info","Неправильный логин или пароль");
+                    request.getRequestDispatcher(LoginServlet.pathToJsp.getString("loginForm")).forward(request, response);
+                    break;
+                }
                 session.setAttribute("user",user);
                 request.setAttribute("info","success");
                 if (userRolesFacade.isRole("CUSTOMER", user)){
@@ -184,7 +197,9 @@ public class LoginServlet extends HttpServlet {
                     request.getRequestDispatcher(LoginServlet.pathToJsp.getString("addUserForm")).forward(request, response);
                     break;
                 }
-                User user = new User(name,password);
+                String salt = encryptPassword.createSalt();
+                String enctyptPass = encryptPassword.createHash(password, salt);
+                User user = new User("admin",enctyptPass,salt);
                 userFacade.create(user);
                 Role role = roleFacade.findByName("CUSTOMER");
                 UserRoles userRoles = new UserRoles(user,role);

@@ -24,15 +24,26 @@ public class User implements Serializable{
     @Column(unique = true)
     private String login;
     private String password;
+    private String salt;
     private int money;
 
-    public User(String login, String password) {
+    public User(String login, String password,String salt) {
         this.login = login;
         this.password = password;
+        this.salt = salt;
     }
 
     public User() {
     }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+    
 
     public Long getId() {
         return id;

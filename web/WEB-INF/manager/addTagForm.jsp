@@ -8,7 +8,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
         <h3 class="w-100 text-center  my-5">Добавить тэг</h3>
-        <h2>${info}</h2>
         <div class="" style="width: 50rem; margin: 0 auto">
             <form action="addTag" method="POST">
                   <div class="mb-3 row">

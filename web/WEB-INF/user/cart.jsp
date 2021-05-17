@@ -12,8 +12,7 @@
         <title>Cart</title>
     </head>
     <body>
-        <div class="container" style="text-align: center"><h1>${info}</h1></div>
-        <form method="POST" action="buy" class="container py-5" style="text-align: center">
+        <form method="POST" action="buy" style="text-align: center">
             <c:forEach var="entry" items="${cart}">
                 <div class="container p-5 m-5 border">
                     <div class="row">
@@ -30,6 +29,6 @@
                     </div>
                 </div>
             </c:forEach>
-            <input style="" type="submit">
+            <input style="" id="submit" type="submit">
         </form>
 

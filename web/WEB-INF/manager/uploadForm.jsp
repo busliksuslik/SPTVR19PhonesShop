@@ -7,7 +7,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
         <h3>Загрузить файл</h3>
-        <h2>${info}</h2>
         <form action="uploadPicture" method="POST"  enctype="multipart/form-data">
             <div class="row mb-3">
               <label for="file" class="form-label">Выберите локальный файл</label>

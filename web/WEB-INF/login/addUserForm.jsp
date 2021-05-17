@@ -14,10 +14,9 @@
     <body>
         <h1 style = "text-align: center;"> Add user</h1>
         <form action = "createUser" method="POST" style = "text-align: center;">
-            <input placeholder="Name" name="name" value="${name}"><br>
-            <input placeholder="Password" name = "password"value="${password}"><br>
+            <input placeholder="Name" name="name" id="login" value="${name}"><br>
+            <input placeholder="Password" name = "password" id="password" value="${password}"><br>
             <input style="" type="submit">
         </form>
-        ${info}
     </body>
 </html>
