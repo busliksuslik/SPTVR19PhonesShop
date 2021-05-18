@@ -5,8 +5,8 @@
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="sptvr19weblibrary"/>
-        <property name="User" value="buslik"/>
-        <property name="Password" value="buslik"/>
+        <property name="User" value="sptvr19weblibrary"/>
+        <property name="Password" value="157359258"/>
         <property name="URL" value="jdbc:mysql://localhost:3306/sptvr19weblibrary?zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;charterEncoding=utf8"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
@@ -15,8 +15,8 @@
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="3306"/>
         <property name="databaseName" value="sptvr19webphoneshop"/>
-        <property name="User" value="root"/>
-        <property name="Password" value=""/>
+        <property name="User" value="sptvr19webphoneshop"/>
+        <property name="Password" value="sptvr19webphoneshop"/>
         <property name="URL" value="jdbc:mysql://localhost:3306/sptvr19webphoneshop?zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;charterEncoding=utf8"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>

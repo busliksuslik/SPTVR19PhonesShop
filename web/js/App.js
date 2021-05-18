@@ -1,4 +1,6 @@
 import {authModule} from "./AuthModule.js";
+//import {phoneModule} from './PhoneModule.js';
+
 document.getElementById("loginForm").onclick = function (){
     toggleMenuActive("loginForm");
     authModule.printLoginForm();
@@ -6,6 +8,7 @@ document.getElementById("loginForm").onclick = function (){
 
 document.getElementById("logout").onclick = function (){
     toggleMenuActive("logout");
+    authModule.logout();
     
 };
 
@@ -36,6 +39,7 @@ document.getElementById("adminMode").onclick = function (){
 document.getElementById("cart").onclick = function (){
     toggleMenuActive("cart");
 };
+authModule.toogleMenu();
 
 function toggleMenuActive(elementId){
     let activeElement = document.getElementById(elementId);
