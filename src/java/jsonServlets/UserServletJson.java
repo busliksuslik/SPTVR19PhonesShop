@@ -5,14 +5,17 @@
  */
 package jsonServlets;
 
+import entites.Role;
 import entites.User;
+import facades.ProductFacade;
 import facades.RoleFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import javax.ejb.EJB;
-import javax.inject.Inject;
+import javax.jms.Session;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -24,22 +27,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import tools.EncryptPassword;
+import tools.HashPassword;
 
 /**
  *
- * @author user
+ * @author nikita
  */
-@WebServlet(name = "LoginServletJson", urlPatterns = {
-    "/loginJson",
-    "/logoutJson",
-    
-})
-public class LoginServletJson extends HttpServlet {
-    @EJB UserFacade userFacade;
-    @EJB UserRolesFacade userRolesFacade;
-    @EJB RoleFacade roleFacade;
-    
-    @Inject EncryptPassword encryptPassword;
+@WebServlet(name = "UserServletJson", urlPatterns = {"/createUserJson"})
+public class UserServletJson extends HttpServlet {
+    @EJB private ProductFacade productFacade;
+    @EJB private UserFacade userFacade;
+    @EJB private RoleFacade roleFacade;
+    @EJB private UserRolesFacade userRolesFacade;
+     private EncryptPassword encryptPassword = new HashPassword();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -57,67 +58,54 @@ public class LoginServletJson extends HttpServlet {
         JsonReader jsonReader = Json.createReader(request.getReader());
         JsonObjectBuilder job = Json.createObjectBuilder();
         String path = request.getServletPath();
-
+        JsonObject jsonObject = jsonReader.readObject();
+        
         switch (path) {
-            case "/loginJson":
-                String login ;
-                String password ;
-                JsonObject jsonObject = jsonReader.readObject();
-                login = jsonObject.getString("login","");
-                password = jsonObject.getString("password","");
-                if(login == null || "".equals(login)
-                        || password == null || "".equals(password)){
-                    json=job.add("requestStatus", "false")
-                        .add("info", "Нет такого пользователя")
-                        .build()
-                        .toString();
-                    break;
-                }
-                User regUser = userFacade.userFind(login);
-                if(regUser == null){
-                   json=job.add("requestStatus", "false")
-                        .add("info", "Нет такого пользователя")
-                        .build()
-                        .toString();
-                    break;
-                }
-                password = encryptPassword.createHash(password, regUser.getSalt());
-                if(!password.equals(regUser.getPassword())){
-                    json=job.add("requestStatus", "false")
-                        .add("info", "Нет такого пользователя")
-                        .build()
-                        .toString();
-                    break;
-                }
-                HttpSession session = request.getSession(true);
-                session.setAttribute("user", regUser);
-                json=job.add("requestStatus", "true")
-                        .add("info", "Вы вошли как "+regUser.getLogin())
-                        .add("token", session.getId())
-                        .add("role", userRolesFacade.getTopUserRole(regUser).getName())
-                        .build()
-                        .toString();
+            case "/createUserJson":{
                 
-                break;
-            case "/logoutJson":
-                session = request.getSession(false);
-                if(session != null){
-                    session.invalidate();
-                    json=job.add("requestStatus", "true")
-                        .add("info", "Вы вышли")
-                        .build()
-                        .toString();
+                String login = jsonObject.getString("login", "");
+                String password = jsonObject.getString("password", "");
+                if(login == null || "".equals(login)
+                        || password == null || "".equals(password)
+                        ){
+                    job.add("info", "Пользователь не создан");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
                 }
+                String salt = encryptPassword.createSalt();
+                password = encryptPassword.createHash(password, salt);
+                User user= new User(login, password, salt);
+                try {
+                    userFacade.create(user);
+                } catch (Exception e) {
+                    userFacade.remove(user);
+                    job.add("info", "Может такой пользователь уже есть");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                Role role = roleFacade.findByName("CUSTOMER");
+                userRolesFacade.setRoleToUser(role, user);
+                job.add("info", "Пользователь "+user.getLogin()+" создан");
+                job.add("requestStatus","true");     
+                JsonObject jsonResponse = job.build();
+                json = jsonResponse.toString();
                 break;
-        }
-        if(json == null && "".equals(json)){
-            json=job.add("requestStatus", "false")
-                        .add("info", "Ошибка обработки запроса")
-                        .build()
-                        .toString();
-        }
-        try (PrintWriter out = response.getWriter()) {
-            out.println(json);
+            }
+            case "/mutateOne":{
+                String login = jsonObject.getString("login", "");
+                HttpSession session = request.getSession(false);
+                User user = (User) session.getAttribute("user");
+                job.add("login", login);
+                JsonObject jsonResponse = job.build();
+                json = jsonResponse.toString();
+                //user.setLogin(login);
+                //userFacade.edit(user);
+                
+            }
         }
     }
 

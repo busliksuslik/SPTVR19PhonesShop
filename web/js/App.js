@@ -1,4 +1,7 @@
 import {authModule} from "./AuthModule.js";
+import {productModule} from "./ProductModule.js";
+import {userModule} from "./UserModule.js";
+
 //import {phoneModule} from './PhoneModule.js';
 
 document.getElementById("loginForm").onclick = function (){
@@ -14,10 +17,12 @@ document.getElementById("logout").onclick = function (){
 
 document.getElementById("products").onclick = function (){
     toggleMenuActive("products");
+    productModule.printProducts();
 };
 
 document.getElementById("addUserForm").onclick = function (){
     toggleMenuActive("addUserForm");
+    userModule.registration();
 };
 
 document.getElementById("addMoneyForm").onclick = function (){
@@ -38,6 +43,10 @@ document.getElementById("adminMode").onclick = function (){
 
 document.getElementById("cart").onclick = function (){
     toggleMenuActive("cart");
+};
+document.getElementById("change").onclick = function (){
+    toggleMenuActive("change");
+    userModule.mutationOne();
 };
 authModule.toogleMenu();
 

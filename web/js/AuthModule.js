@@ -54,8 +54,6 @@ class AuthModule{
         console.log("Ошибка получения данных");
       }
       authModule.toogleMenu();
-      // console.log('Auth: token'+sessionStorage.getItem('token'));
-      // console.log('Auth: role'+sessionStorage.getItem('role'));
     }
     async logout(){
       const response = await fetch('logoutJson',{
@@ -83,20 +81,52 @@ class AuthModule{
       console.log('Auth: role - '+sessionStorage.getItem('role'));
       
       if(role===null){
-        document.getElementById("products").style.display = 'block';
+        document.getElementById("products").style.display = 'none';
         document.getElementById("addUserForm").style.display = 'block';
+        document.getElementById("addMoneyForm").style.display = 'none';
+        document.getElementById("addHistoryForm").style.display = 'none';
+        document.getElementById("loginForm").style.display = 'block';
+        document.getElementById("logout").style.display = 'none';
+        document.getElementById("managerMode").style.display = 'none';
+        document.getElementById("adminMode").style.display = 'none';
+        document.getElementById("cart").style.display = 'none';
+        document.getElementById("change").style.display = 'none';
 
       }else if(role==="CUSTOMER"){
         document.getElementById("products").style.display = 'block';
         document.getElementById("addUserForm").style.display = 'none';
+        document.getElementById("addMoneyForm").style.display = 'block';
+        document.getElementById("addHistoryForm").style.display = 'none';
+        document.getElementById("loginForm").style.display = 'none';
+        document.getElementById("logout").style.display = 'block';
+        document.getElementById("managerMode").style.display = 'none';
+        document.getElementById("adminMode").style.display = 'none';
+        document.getElementById("cart").style.display = 'block';
+        document.getElementById("change").style.display = 'block';
 
       }else if(role==="MANAGER"){
         document.getElementById("products").style.display = 'block';
-        document.getElementById("addUserForm").style.display = 'none';
+        document.getElementById("addUserForm").style.display = 'block';
+        document.getElementById("addMoneyForm").style.display = 'block';
+        document.getElementById("addHistoryForm").style.display = 'block';
+        document.getElementById("loginForm").style.display = 'none';
+        document.getElementById("logout").style.display = 'block';
+        document.getElementById("managerMode").style.display = 'block';
+        document.getElementById("adminMode").style.display = 'none';
+        document.getElementById("cart").style.display = 'block';
+        document.getElementById("change").style.display = 'block';
 
       }else if(role==="ADMIN"){
         document.getElementById("products").style.display = 'block';
         document.getElementById("addUserForm").style.display = 'none';
+        document.getElementById("addMoneyForm").style.display = 'block';
+        document.getElementById("addHistoryForm").style.display = 'block';
+        document.getElementById("loginForm").style.display = 'none';
+        document.getElementById("logout").style.display = 'block';
+        document.getElementById("managerMode").style.display = 'block';
+        document.getElementById("adminMode").style.display = 'block';
+        document.getElementById("cart").style.display = 'block';
+        document.getElementById("change").style.display = 'block';
 
       }
     
