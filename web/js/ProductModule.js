@@ -29,6 +29,7 @@ class ProductModule{
     }
     printAddProductForm(){
         document.getElementById("content").innerHTML = `
+        <form>
                     <div class="col-sm-9">
                       <input type="text" class="form-control" id="name" name="name" value="">
                     </div>
@@ -47,7 +48,8 @@ class ProductModule{
                 <div class="col-sm-12">
                   <button  class="btn btn-primary mb-3 w-100" id="add">Отправить</button>
                 </div>
-                  </div>`;
+                  </div>
+            <form>`;
         document.getElementById("add").addEventListener('click', productModule.addProduct);
     }
     async addProduct(){
