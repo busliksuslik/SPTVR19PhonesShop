@@ -1,24 +1,89 @@
 class ProductModule{
-    printProducts(){
+    async printProducts(){
+        var result = "";
+        let response = await fetch('listProductsJson', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+            result = await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+          console.log(result);
+        var output = `<div class="card m-2" style="min-width: 12rem;">`
+        
+        output+= 
+           `<img src="insertFile/"  class="card-img-top" alt="..." style="max-width: 12rem; max-height: 15rem">
+            <div class="card-body">
+              <h5 class="card-title"></h5>
+              <p class="card-text">Цена: </p>
+              <p class="card-text">Кол-во: </p>
+              <p class="card-text"><c:forEach var="tag" items="}"><span></span> <br></p>
+            </div>`;
+        
+        document.getElementById("content").innerHTML = output;
+    }
+    printAddProductForm(){
         document.getElementById("content").innerHTML = `
-            <input type="text" placeholder="name" id="login" name="login" value=""><br>
-            <input type="password" placeholder="Password" id="password" name = "password" value=""><br>
-            <input id="btnEnter" type="button" value="Enter"><br>
-            <a id="registration-link" href="#registration">registration</a>`;
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="name" name="name" value="">
+                    </div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label for="price" class="col-sm-3 col-form-label">Цена:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="price" name="price" value="">
+                    </div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label for="amount" class="col-sm-3 col-form-label">Кол-во: </label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="amount" id="amount" value="">
+                    </div>
+                <div class="col-sm-12">
+                  <button  class="btn btn-primary mb-3 w-100" id="add">Отправить</button>
+                </div>
+                  </div>`;
+        document.getElementById("add").addEventListener('click', productModule.addProduct);
     }
-    async getListProducts() {
-    let response = await fetch('listProductsJson', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json;charset:utf-8' }
-    });
-    if (response.ok) {
-      let result = await response.json();
-      return result;
-    } else {
-      document.getElementById('info').innerHTML = 'Ошибка сервера';
-      return null;
+    async addProduct(){
+        const name = document.getElementById("name").value;
+        const price = document.getElementById("price").value;
+        const amount = document.getElementById("amount").value;
+        const credential= {
+            "name": name,
+            "price": price,
+            "amount": amount
+        };
+        const response = await fetch('addProductJson', {
+         method: 'POST',
+         headers: {
+          'Content-Type': 'application/json;charset:utf8'
+         },
+         body: JSON.stringify(credential)
+       });
+       
+       if(response.ok){
+        const result = await response.json();
+        document.getElementById('info').innerHTML = result.info;
+        console.log("Request status: "+result.requestStatus);
+        document.getElementById('content').innerHTML='';
+        if(result.requestStatus){
+          sessionStorage.setItem('token',JSON.stringify(result.token));
+          sessionStorage.setItem('role',JSON.stringify(result.role));
+        }else{
+          if(sessionStorage.getItem(token) !== null){
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('role');
+          }
+        }
+      }else{
+        console.log("Ошибка получения данных");
+      }
+      authModule.toogleMenu();
     }
-  }
 }
 
 let productModule = new ProductModule();

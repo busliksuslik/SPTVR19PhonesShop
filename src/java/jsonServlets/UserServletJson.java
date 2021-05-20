@@ -33,7 +33,10 @@ import tools.HashPassword;
  *
  * @author nikita
  */
-@WebServlet(name = "UserServletJson", urlPatterns = {"/createUserJson"})
+@WebServlet(name = "UserServletJson", urlPatterns = {
+    "/createUserJson",
+    "/mutateOne",
+    "/mutateUserJson"})
 public class UserServletJson extends HttpServlet {
     @EJB private ProductFacade productFacade;
     @EJB private UserFacade userFacade;
@@ -54,15 +57,16 @@ public class UserServletJson extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        String json = null;
-        JsonReader jsonReader = Json.createReader(request.getReader());
-        JsonObjectBuilder job = Json.createObjectBuilder();
         String path = request.getServletPath();
-        JsonObject jsonObject = jsonReader.readObject();
-        
+        String json = null;
+        JsonReader jsonReader ;
+        JsonObjectBuilder job ;
+        JsonObject jsonObject ;
         switch (path) {
             case "/createUserJson":{
-                
+                jsonReader = Json.createReader(request.getReader());
+                job = Json.createObjectBuilder();
+                jsonObject = jsonReader.readObject();
                 String login = jsonObject.getString("login", "");
                 String password = jsonObject.getString("password", "");
                 if(login == null || "".equals(login)
@@ -96,16 +100,68 @@ public class UserServletJson extends HttpServlet {
                 break;
             }
             case "/mutateOne":{
-                String login = jsonObject.getString("login", "");
+                job = Json.createObjectBuilder();
+                System.out.println(job);
                 HttpSession session = request.getSession(false);
                 User user = (User) session.getAttribute("user");
-                job.add("login", login);
+                job.add("login", user.getLogin());
                 JsonObject jsonResponse = job.build();
                 json = jsonResponse.toString();
                 //user.setLogin(login);
                 //userFacade.edit(user);
+                break;
+            }
+            case "/mutateUserJson":{
+                jsonReader = Json.createReader(request.getReader());
+                job = Json.createObjectBuilder();
+                jsonObject = jsonReader.readObject();
+                String login = jsonObject.getString("login", "");
+                String password = jsonObject.getString("password", "");
+                if(login == null || "".equals(login)
+                        || password == null || "".equals(password)
+                        ){
+                    job.add("info", "Пользователь не изменён");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                if (userFacade.userExist(login)){
+                    job.add("info", "Already exists");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                HttpSession session = request.getSession(false);
+                User user = (User) session.getAttribute("user");
+                if(!user.getPassword().equals(encryptPassword.createHash(password, user.getSalt()))){
+                    job.add("info", "Invalid password");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                user.setLogin(login);
+                userFacade.edit(user);
+                session.setAttribute("user", user);
+                job.add("info", "success - new login: " + user.getLogin());
+                job.add("requestStatus","false");     
+                JsonObject jsonResponse = job.build();
+                json = jsonResponse.toString();
+                break;
                 
             }
+        }
+        if(json == null || "".equals(json)){
+            job = Json.createObjectBuilder();
+            job.add("info", "Ошибка обработки запроса");
+            job.add("requestStatus","false");     
+            JsonObject jsonResponse = job.build();
+            json = jsonResponse.toString();
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.println(json);
         }
     }
 
