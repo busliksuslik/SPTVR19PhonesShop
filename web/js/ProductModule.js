@@ -13,15 +13,17 @@ class ProductModule{
           }
           console.log(result);
         var output = `<div class="card m-2" style="min-width: 12rem;">`
+        for(let product of result){
+            output+= 
+            `<!--<img src="insertFile/"  class="card-img-top" alt="..." style="max-width: 12rem; max-height: 15rem">-->
+             <div class="card-body">
+               <h5 class="card-title"> ${product.name} </h5>
+               <p class="card-text">Цена:${product.price}  </p>
+               <p class="card-text">Кол-во:${product.count} </p>
+               <p class="card-text"><span></span> <br></p>
+             </div>`;
+        }
         
-        output+= 
-           `<img src="insertFile/"  class="card-img-top" alt="..." style="max-width: 12rem; max-height: 15rem">
-            <div class="card-body">
-              <h5 class="card-title"></h5>
-              <p class="card-text">Цена: </p>
-              <p class="card-text">Кол-во: </p>
-              <p class="card-text"><c:forEach var="tag" items="}"><span></span> <br></p>
-            </div>`;
         
         document.getElementById("content").innerHTML = output;
     }
@@ -82,7 +84,7 @@ class ProductModule{
       }else{
         console.log("Ошибка получения данных");
       }
-      authModule.toogleMenu();
+      
     }
 }
 

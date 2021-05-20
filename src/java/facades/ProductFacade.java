@@ -38,5 +38,14 @@ public class ProductFacade extends AbstractFacade<Product> {
             return false;
         }
     }
+        public boolean productExist(String name, int price){
+        try {
+            return !em.createQuery("SELECT prod FROM Product prod WHERE prod.name = '" + name + "' AND prod.price = '" + price + "'")
+                    .getResultList()
+                    .isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
     
 }

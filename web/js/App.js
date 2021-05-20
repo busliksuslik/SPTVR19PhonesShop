@@ -1,6 +1,7 @@
 import {authModule} from "./AuthModule.js";
 import {productModule} from "./ProductModule.js";
 import {userModule} from "./UserModule.js";
+import {managerModule} from "./ManagerModule.js";
 
 //import {phoneModule} from './PhoneModule.js';
 
@@ -35,6 +36,7 @@ document.getElementById("addHistoryForm").onclick = function (){
 
 document.getElementById("managerMode").onclick = function (){
     toggleMenuActive("managerMode");
+    managerModule.printAdminMenu();
 };
 
 document.getElementById("adminMode").onclick = function (){

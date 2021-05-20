@@ -29,7 +29,9 @@ import jsonServlets.builders.JsonProductBuilder;
  *
  * @author user
  */
-@WebServlet(name = "ProductServletJson", urlPatterns = {"/listProductsJson"})
+@WebServlet(name = "ProductServletJson", urlPatterns = {
+    "/listProductsJson",
+    "/addProductJson"})
 public class ProductServletJson extends HttpServlet {
     @EJB ProductFacade productFacade;
 
@@ -52,18 +54,40 @@ public class ProductServletJson extends HttpServlet {
         String path = request.getServletPath();
         switch (path) {
             case "/listProductsJson":{
+                List<Product> listProducts = productFacade.findAll();
                 JsonArrayBuilder jab = Json.createArrayBuilder();
-                List<Product> products = productFacade.findAll();
-                for(Product p: products){
-                    jab.add(new JsonProductBuilder().createProductJson(p));
-                }
-                job = Json.createObjectBuilder();
-                    job.add("info", "Список пользователей")
-                    .add("requestStatus","true")
-                    .add("listUsers", jab.build());
-                 
-                json = job.build().toString();
+                listProducts.forEach((product)->{
+                    jab.add(new JsonProductBuilder().createProductJson(product));
+                });
+                json = jab.build().toString();
                 break;
+            }
+            case "/addProductJson":{
+                JsonObject jsonObject = jsonReader.readObject();
+                String name = jsonObject.getString("name","");
+                int price = Integer.parseInt(jsonObject.getString("price","-1"));
+                int amount = Integer.parseInt(jsonObject.getString("amount","-1"));
+                if(name == null || "".equals(name) || price == -1 || amount == -1){
+                    job.add("info", "data fault");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                if (productFacade.productExist(name, price)){
+                    job.add("info", "duplicates are not allowed");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                Product product = new Product(name, amount, price);
+                productFacade.create(product);
+                job.add("info", "Чётко");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                
             }
         }
         if(json == null || "".equals(json)){
