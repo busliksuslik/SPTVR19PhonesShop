@@ -20,6 +20,7 @@ class ProductModule{
                <h5 class="card-title"> ${product.name} </h5>
                <p class="card-text">Цена:${product.price}  </p>
                <p class="card-text">Кол-во:${product.count} </p>
+               <img src="insertFile/${product.picture}">
                <p class="card-text"><span></span> <br></p>
              </div>`;
         }
@@ -29,27 +30,49 @@ class ProductModule{
     }
     printAddProductForm(){
         document.getElementById("content").innerHTML = `
-        <form>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" id="name" name="name" value="">
-                    </div>
-                  </div>
-                  <div class="mb-3 row">
-                    <label for="price" class="col-sm-3 col-form-label">Цена:</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" id="price" name="price" value="">
-                    </div>
-                  </div>
-                  <div class="mb-3 row">
-                    <label for="amount" class="col-sm-3 col-form-label">Кол-во: </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="amount" id="amount" value="">
-                    </div>
-                <div class="col-sm-12">
-                  <button  class="btn btn-primary mb-3 w-100" id="add">Отправить</button>
-                </div>
-                  </div>
-            <form>`;
+        <h3 class="w-100 text-center my-5 ">Добавить новый продукт</h3>
+        <form id="productForm" method="POST" enctype="multipart/form-data">
+        <div class="row w-50 my-2 mx-auto">
+          <div class="col-4 text-end">
+              Название 
+          </div>
+          <div class="col-8 text-start ">
+            <input class="w-100" type="text" name="name" id="name">
+          </div>
+        </div>
+        <div class="row w-50 my-2 mx-auto">
+          <div class="col-4 text-end">
+            Кол-во
+          </div>
+          <div class="col-8 text-start">  
+            <input class="col-8" type="text" name="amount" id="amount">
+          </div>
+        </div>
+        <div class="row w-50 my-2 mx-auto">
+          <div class="col-4 text-end">   
+              Цена
+          </div>
+          <div class="col-8 text-start">  
+            <input class="col-4" type="text" name="price" id="price">
+          </div>
+        </div>
+        <div class="row w-50 my-2 mx-auto">
+          <div class="col-4 text-end">
+              Загрузите обложку 
+          </div>
+          <div class="col-8 text-start">     
+              <input class="form-control col" type="file" name="file" id="file-cover">
+          </div>
+        </div>
+        <div class="row w-50 my-2 mx-auto">
+        <div class="col-4 text-end">
+        </div>
+        <div class="col-8 text-start mt-3">     
+          <input class="w-50 bg-primary text-white" type="submit" id="add" name="submit" value="Добавить">
+        </div>
+      </div>
+      </form>
+        `;
         document.getElementById("add").addEventListener('click', productModule.addProduct);
     }
     async addProduct(){
@@ -63,10 +86,7 @@ class ProductModule{
         };
         const response = await fetch('addProductJson', {
          method: 'POST',
-         headers: {
-          'Content-Type': 'application/json;charset:utf8'
-         },
-         body: JSON.stringify(credential)
+         body: new FormData(document.getElementById('productForm'))//JSON.stringify(credential)
        });
        
        if(response.ok){

@@ -5,9 +5,10 @@
  */
 package jsonServlets.builders;
 
+import entites.Picture;
 import entites.Product;
+import facades.PictureFacade;
 import facades.ProductFacade;
-import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -22,37 +23,26 @@ import javax.naming.NamingException;
  *
  * @author user
  */
-public class JsonProductBuilder {
+public class JsonPictureBuilder {
     @EJB private ProductFacade productFacade;
+    @EJB private PictureFacade pictureFacade;
     
-    public JsonProductBuilder() {
+    public JsonPictureBuilder() {
         Context ctx;
         try {
             ctx = new InitialContext();
+            this.pictureFacade = (PictureFacade) ctx.lookup("java:global/JKTVR19WebLibrary/PictureFacade");
             this.productFacade = (ProductFacade) ctx.lookup("java:global/JKTVR19WebLibrary/ProductFacade");
         } catch (NamingException ex) {
             Logger.getLogger(JsonProductBuilder.class.getName()).log(Level.SEVERE, "Нет такого класса", ex);
         }
     }
     
-    public JsonObject createProductJson(Product product){
+    public JsonObject createProductJson(Picture picture){
         JsonObjectBuilder job = Json.createObjectBuilder();
-        
-        job.add("id", product.getId())
-                .add("name", product.getName())
-                .add("count", product.getCount())
-                .add("price", product.getPrice());
-        try{
-            if(product.getPicture().getPath() == null){
-            job.add("picture", "");
-            } else{
-                job.add("picture", product.getPicture().getPath());
-            }
-        } catch (NullPointerException e){
-            job.add("picture", "");
-        }
-        
-                
+        job.add("id", picture.getId())
+                .add("description", picture.getDescription())
+                .add("path", picture.getPath());
         return job.build();
     }
 }

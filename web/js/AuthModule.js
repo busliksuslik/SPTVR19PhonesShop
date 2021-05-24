@@ -1,12 +1,14 @@
 class AuthModule{
     printLoginForm(){
         document.getElementById("content").innerHTML = `
+        <form>
         <div style="height: 200px; position: relative;border: 3px solid green;">
         <div style="margin: 0;position: absolute;top: 50%; -ms-transform: translateY(-50%);transform: translateY(-50%);">
             <input type="text" placeholder="name" id="login" name="login" value=""><br>
             <input type="password" placeholder="Password" id="password" name = "password" value=""><br>
             <input id="btnEnter" type="button" value="Enter"><br>
-            <a id="registration-link" href="#registration">registration</a></div></div>`
+            <a id="registration-link" href="#registration">registration</a></div></div>
+        <form>`
         ;
             /*document.addEventListener('keydown', e =>{
                 if (!e.repeat && e.key === "Enter"){
