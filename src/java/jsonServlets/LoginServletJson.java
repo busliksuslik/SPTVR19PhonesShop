@@ -5,15 +5,20 @@
  */
 package jsonServlets;
 
+import entites.Product;
+import entites.Role;
 import entites.User;
+import facades.ProductFacade;
 import facades.RoleFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -23,6 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import jsonServlets.builders.JsonProductBuilder;
 import tools.EncryptPassword;
 
 /**
@@ -32,12 +38,15 @@ import tools.EncryptPassword;
 @WebServlet(name = "LoginServletJson", urlPatterns = {
     "/loginJson",
     "/logoutJson",
+    "/createUserJson",
+    "/listProductsJson",
     
 })
 public class LoginServletJson extends HttpServlet {
     @EJB UserFacade userFacade;
     @EJB UserRolesFacade userRolesFacade;
     @EJB RoleFacade roleFacade;
+    @EJB ProductFacade productFacade;
     
     @Inject EncryptPassword encryptPassword;
     /**
@@ -109,7 +118,53 @@ public class LoginServletJson extends HttpServlet {
                         .toString();
                 }
                 break;
+            case "/createUserJson":{
+                jsonReader = Json.createReader(request.getReader());
+                job = Json.createObjectBuilder();
+                jsonObject = jsonReader.readObject();
+                login = jsonObject.getString("login", "");
+                password = jsonObject.getString("password", "");
+                if(login == null || "".equals(login)
+                        || password == null || "".equals(password)
+                        ){
+                    job.add("info", "Пользователь не создан");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                String salt = encryptPassword.createSalt();
+                password = encryptPassword.createHash(password, salt);
+                User user= new User(login, password, salt);
+                try {
+                    userFacade.create(user);
+                } catch (Exception e) {
+                    userFacade.remove(user);
+                    job.add("info", "Может такой пользователь уже есть");
+                    job.add("requestStatus","false");     
+                    JsonObject jsonResponse = job.build();
+                    json = jsonResponse.toString();
+                    break;
+                }
+                Role role = roleFacade.findByName("CUSTOMER");
+                userRolesFacade.setRoleToUser(role, user);
+                job.add("info", "Пользователь "+user.getLogin()+" создан");
+                job.add("requestStatus","true");     
+                JsonObject jsonResponse = job.build();
+                json = jsonResponse.toString();
+                break;
+            }
+            case "/listProductsJson":{
+                List<Product> listProducts = productFacade.findAll();
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                listProducts.forEach((product)->{
+                    jab.add(new JsonProductBuilder().createProductJson(product));
+                });
+                json = jab.build().toString();
+                break;
+            }
         }
+        
         if(json == null && "".equals(json)){
             json=job.add("requestStatus", "false")
                         .add("info", "Ошибка обработки запроса")

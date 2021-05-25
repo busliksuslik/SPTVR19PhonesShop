@@ -29,7 +29,7 @@ public class JsonProductBuilder {
         Context ctx;
         try {
             ctx = new InitialContext();
-            this.productFacade = (ProductFacade) ctx.lookup("java:global/JKTVR19WebLibrary/ProductFacade");
+            this.productFacade = (ProductFacade) ctx.lookup("java:global/SPTVR19PhonesShop/ProductFacade");
         } catch (NamingException ex) {
             Logger.getLogger(JsonProductBuilder.class.getName()).log(Level.SEVERE, "Нет такого класса", ex);
         }

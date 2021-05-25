@@ -31,8 +31,8 @@ public class JsonPictureBuilder {
         Context ctx;
         try {
             ctx = new InitialContext();
-            this.pictureFacade = (PictureFacade) ctx.lookup("java:global/JKTVR19WebLibrary/PictureFacade");
-            this.productFacade = (ProductFacade) ctx.lookup("java:global/JKTVR19WebLibrary/ProductFacade");
+            this.pictureFacade = (PictureFacade) ctx.lookup("java:global/SPTVR19PhonesShop/PictureFacade");
+            this.productFacade = (ProductFacade) ctx.lookup("java:global/SPTVR19PhonesShop/ProductFacade");
         } catch (NamingException ex) {
             Logger.getLogger(JsonProductBuilder.class.getName()).log(Level.SEVERE, "Нет такого класса", ex);
         }

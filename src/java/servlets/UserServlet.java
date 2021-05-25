@@ -44,7 +44,7 @@ import javax.servlet.http.HttpSession;
     "/addHistoryForm",
     "/addHistory",
     "/addMoneyForm",
-    "/addMoney",
+    "/LaddMoney",
     "/cart",
     "/buy",
     

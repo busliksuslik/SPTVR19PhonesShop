@@ -28,10 +28,12 @@ document.getElementById("addUserForm").onclick = function (){
 
 document.getElementById("addMoneyForm").onclick = function (){
     toggleMenuActive("addMoneyForm");
+    userModule.addMoneyForm();
 };
 
 document.getElementById("addHistoryForm").onclick = function (){
     toggleMenuActive("addHistoryForm");
+    productModule.addToCartForm();
 };
 
 document.getElementById("managerMode").onclick = function (){
@@ -45,6 +47,7 @@ document.getElementById("adminMode").onclick = function (){
 
 document.getElementById("cart").onclick = function (){
     toggleMenuActive("cart");
+    productModule.cart();
 };
 document.getElementById("change").onclick = function (){
     toggleMenuActive("change");

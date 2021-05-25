@@ -47,7 +47,6 @@ class UserModule{
             //var obj = JSON.parse(result);
             //console.log(obj);
         }
-        alert(result);
         document.getElementById('content').innerHTML = `
         <h1>account mutation</h1>
         <input placeholder="Name" name="name" id="login" value="`+result.login+`"><br>
@@ -69,6 +68,28 @@ class UserModule{
                 'Content-Type': 'application/json;charset:utf8'
             },
             body: JSON.stringify(user)
+        });
+    }
+    addMoneyForm(){
+        document.getElementById('content').innerHTML = 
+        `<form>
+            <input placeholder="Money" id="money" name = "money" value=""><br>
+            <input style="" id="addMoney" type="submit">
+        </form>`;
+        document.getElementById('addMoney').addEventListener('click', userModule.addMoney);
+        
+    }
+    async addMoney(){
+        const moneyV = document.getElementById("money").value;
+        const money = {
+            "money": moneyV
+        };
+        const response = await fetch('addMoney',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset:utf8'
+            },
+            body: JSON.stringify(money)
         });
     }
 }

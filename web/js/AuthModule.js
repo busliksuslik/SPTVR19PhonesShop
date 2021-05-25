@@ -86,7 +86,7 @@ class AuthModule{
       console.log('Auth: role - '+sessionStorage.getItem('role'));
       
       if(role===null){
-        document.getElementById("products").style.display = 'none';
+        document.getElementById("products").style.display = 'block';
         document.getElementById("addUserForm").style.display = 'block';
         document.getElementById("addMoneyForm").style.display = 'none';
         document.getElementById("addHistoryForm").style.display = 'none';
