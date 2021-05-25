@@ -58,9 +58,9 @@ import javax.servlet.http.HttpSession;
     "/changeTagForm",
     "/changeTag",
     
-    "/users",
+    "/Lusers",
     
-    "/histories",
+    "/Lhistories",
     
     "/discountForm",
     "/setDiscount",

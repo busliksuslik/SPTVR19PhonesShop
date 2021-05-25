@@ -92,6 +92,39 @@ class UserModule{
             body: JSON.stringify(money)
         });
     }
+    async getUsers(){
+        var result = "";
+        let response = await fetch('users', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+            return await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+    }
+    async users(){
+        var users = await userModule.getUsers();
+        for (let user of users){
+            document.getElementById("content").innerHTML += `
+                <li>${user.login} | ${user.money}</li>`;
+        }
+    }
+    async histories(){
+        var result = "";
+        let response = await fetch('histories', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+            return await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+    }
 }
 const userModule = new UserModule();
 export {userModule};

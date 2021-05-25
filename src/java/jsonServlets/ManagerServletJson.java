@@ -7,8 +7,10 @@ package jsonServlets;
 
 import entites.Picture;
 import entites.Product;
+import entites.User;
 import facades.PictureFacade;
 import facades.ProductFacade;
+import facades.UserFacade;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -34,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import jsonServlets.builders.JsonProductBuilder;
+import jsonServlets.builders.JsonUserBuilder;
 
 /**
  *
@@ -41,11 +45,14 @@ import jsonServlets.builders.JsonProductBuilder;
  */
 @MultipartConfig
 @WebServlet(name = "ProductServletJson", urlPatterns = {
-    
-    "/addProductJson"})
+    "/changeProductJson",
+    "/addProductJson",
+    "/users",
+    "/histories",})
 public class ManagerServletJson extends HttpServlet {
     @EJB ProductFacade productFacade;
     @EJB PictureFacade pictureFacade;
+    @EJB UserFacade userFacade;
     public static final ResourceBundle pathToUploadDir = ResourceBundle.getBundle("property.settingUpload");
 
     /**
@@ -135,7 +142,50 @@ public class ManagerServletJson extends HttpServlet {
                     .toString();
                 
                 break;
-        }
+             }
+             case "/changeProductJson":{
+                JsonReader jsonReader = Json.createReader(request.getReader());
+                JsonObject jsonObject = jsonReader.readObject();
+                String id = jsonObject.getString("id", null);
+                String name = jsonObject.getString("name", null);
+                String count = jsonObject.getString("count", null);
+                String price = jsonObject.getString("price", null);
+                if (id == null || "".equals(id)){
+                    json=job.add("requestStatus", "false")
+                        .add("info", "Не выбран продукт")
+                        .build()
+                        .toString();
+                     break; 
+                }
+                Product product = productFacade.find(Long.parseLong(id));
+                if(!"".equals(name) && name != null){
+                    product.setName(name);
+                }
+                if(!"".equals(count) && count != null){
+                    product.setCount(Integer.parseInt(count));
+                }
+                if(!"".equals(price) && price != null){
+                    product.setPrice(Integer.parseInt(price));
+                }
+                productFacade.edit(product);
+                json=job.add("requestStatus", "true")
+                        .add("info", "OK")
+                        .build()
+                        .toString();
+                     break; 
+             }
+             case "/users":{
+                JsonArrayBuilder jab = Json.createArrayBuilder();
+                for (User u: userFacade.findAllExceptAdmin()){
+                    jab.add(new JsonUserBuilder().createUserJson(u));
+                }
+                JsonArray jsonResponse = jab.build();
+                json = jsonResponse.toString();
+                break;
+             }
+             case "/histories":{
+                 
+             }
             /*case "/addProductJson":{
                 JsonObject jsonObject = jsonReader.readObject();
                 String name = jsonObject.getString("name","");

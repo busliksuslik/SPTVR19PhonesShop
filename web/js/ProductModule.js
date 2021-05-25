@@ -1,7 +1,19 @@
 class ProductModule{
-    async printProducts(){
-        var result = "";
+    async productList(){
         let response = await fetch('listProductsJson', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+             return await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+    }
+    async printProducts(){
+        var result = await this.productList();
+        /*let response = await fetch('listProductsJson', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json;charset:utf-8' }
           });
@@ -10,7 +22,7 @@ class ProductModule{
           } else {
             document.getElementById('info').innerHTML = 'Ошибка сервера';
             return null;
-          }
+          }*/
           console.log(result);
         var output = `<div class="card m-2" style="min-width: 12rem;">`
         for(let product of result){
@@ -109,8 +121,8 @@ class ProductModule{
       
     }
     async addToCartForm(){
-        var result = "";
-        let response = await fetch('listProductsJson', {
+        var result = await this.productList();
+        /*let response = await fetch('listProductsJson', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json;charset:utf-8' }
           });
@@ -119,7 +131,7 @@ class ProductModule{
           } else {
             document.getElementById('info').innerHTML = 'Ошибка сервера';
             return null;
-          }
+          }*/
           console.log(result);
         var output = `<div class="card m-2" style="min-width: 12rem;">`
         for(let product of result){
@@ -219,7 +231,50 @@ class ProductModule{
         console.log("Ошибка получения данных");
       }
     }
+    async changeProductForm(){
+        var output = "";
+        var result = await this.productList();
+        output +=`
+        <form>
+            <select id="product" size = "10">`;
+        for(let product of result){
+            output +=`<option value="${product.id}">${product.name}|${product.price}$|${product.count}</option>`;
+        }
+        output +=`
+            </select>
+            <input id="name" placeholder="Name" name="name" value="">    <br>
+            <input id="price" placeholder="Price" name = "price" value=""><br>
+            <input id="amount" placeholder="amount" name = "amount"value=""><br>
+            <input style="" id="submit" type="button" value="Enter">
+        </form>`;
+        document.getElementById("content").innerHTML = output;
+        document.getElementById("submit").addEventListener("click",productModule.changeProduct);
+    }
+    async changeProduct(){
+        const data = {
+            "id" : document.getElementById("product").value,
+            "name" : document.getElementById("name").value,
+            "price" : document.getElementById("price").value,
+            "amount" : document.getElementById("amount").value
+        };
+        const response = await fetch('changeProductJson', {
+         method: 'POST',
+         body: JSON.stringify(data)
+       });
+       
+       if(response.ok){
+        const result = await response.json();
+        document.getElementById('info').innerHTML = result.info;
+        console.log("Request status: "+result.requestStatus);
+        productModule.changeProductForm();
+      }else{
+        console.log("Ошибка получения данных");
+      }
+    }
+        
+        //console.log(document.getElementById("name").value)
 }
+        
 
 let productModule = new ProductModule();
 export {productModule};

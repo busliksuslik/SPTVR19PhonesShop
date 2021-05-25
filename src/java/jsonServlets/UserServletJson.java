@@ -83,7 +83,6 @@ public class UserServletJson extends HttpServlet {
         switch (path) {
             case "/mutateOne":{
                 job = Json.createObjectBuilder();
-                System.out.println(job);
                 session = request.getSession(false);
                 User user = (User) session.getAttribute("user");
                 job.add("login", user.getLogin());
@@ -210,6 +209,7 @@ public class UserServletJson extends HttpServlet {
                 User user = (User) session.getAttribute("user");
                 if (user.getMoney() < price){
                     job.add("info","Недостаточно денег");
+                    json = job.build().toString();
                     break;
                 }
                 for(int i = 0; i < jsonArray.size(); i++){
@@ -226,6 +226,7 @@ public class UserServletJson extends HttpServlet {
                 user.setMoney(user.getMoney() - price);
                 userFacade.edit(user);
                 job.add("info","Куплено");
+                json = job.build().toString();
                 break;
             }
         }

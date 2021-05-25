@@ -8,6 +8,7 @@
         <a class="btn btn-primary" id="changeTag" role="button">Change tag</a>
  */
 import {productModule} from "./ProductModule.js";
+import {userModule} from "./UserModule.js";
 class ManagerModule{
     printAdminMenu(){
         document.getElementById("content").innerHTML = `
@@ -18,15 +19,23 @@ class ManagerModule{
             <a class="btn btn-primary" id="addTag"            role="button">Add tag</a>
             <a class="btn btn-primary" id="changeProductTags" role="button">Change product tag</a>
             <a class="btn btn-primary" id="changeTag"         role="button">Change tag</a>`;
-        document.getElementById("addProduct").onclick = function (){
+        document.getElementById("addProduct").addEventListener('click', function(){
             productModule.printAddProductForm();
-        };
-        document.getElementById("changeProduct").onclick = function (){};
-        document.getElementById("users").onclick = function (){};
-        document.getElementById("histories").onclick = function (){};
-        document.getElementById("addTag").onclick = function (){};
-        document.getElementById("changeProductTags").onclick = function (){};
-        document.getElementById("changeTag").onclick = function (){};
+        });
+        document.getElementById("changeProduct").addEventListener('click', function(){
+            productModule.changeProductForm();
+        });
+        document.getElementById("users").addEventListener('click', function(){
+            userModule.users();
+        });
+        document.getElementById("histories").addEventListener('click',  function(){
+        });
+        document.getElementById("addTag").addEventListener('click',  function(){
+        });
+        document.getElementById("changeProductTags").addEventListener('click',  function(){
+        });
+        document.getElementById("changeTag").addEventListener('click',  function(){
+        });
     }
     
         

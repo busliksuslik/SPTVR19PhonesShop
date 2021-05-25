@@ -101,7 +101,7 @@ class AuthModule{
         document.getElementById("products").style.display = 'block';
         document.getElementById("addUserForm").style.display = 'none';
         document.getElementById("addMoneyForm").style.display = 'block';
-        document.getElementById("addHistoryForm").style.display = 'none';
+        document.getElementById("addHistoryForm").style.display = 'block';
         document.getElementById("loginForm").style.display = 'none';
         document.getElementById("logout").style.display = 'block';
         document.getElementById("managerMode").style.display = 'none';
