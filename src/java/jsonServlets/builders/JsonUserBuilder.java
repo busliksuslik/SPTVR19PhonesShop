@@ -5,14 +5,18 @@
  */
 package jsonServlets.builders;
 
+import entites.Role;
 import entites.User;
 import facades.RoleFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.naming.Context;
@@ -43,5 +47,21 @@ public class JsonUserBuilder {
                 .add("money", user.getMoney())
                 .add("topRole", roleFacade.find(userRolesFacade.getTopUserRole(user).getId()).getName());
         return job.build();
+    }
+    public JsonObject createRoleJson(Role role){
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        
+        job.add("id", role.getId())
+                .add("name", role.getName());
+        return job.build();
+    }
+    public JsonArray createAllRolesJson(){
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        List<Role> roles = roleFacade.findAll();
+        roles.forEach((role) -> {
+            jab.add(createRoleJson(role));
+        });
+        
+        return jab.build();
     }
 }

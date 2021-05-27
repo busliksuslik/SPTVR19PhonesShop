@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jsonServlets.builders.JsonProductBuilder;
+import jsonServlets.builders.JsonUserBuilder;
 import tools.EncryptPassword;
 
 /**
@@ -163,6 +164,7 @@ public class LoginServletJson extends HttpServlet {
                 json = jab.build().toString();
                 break;
             }
+            
         }
         
         if(json == null && "".equals(json)){

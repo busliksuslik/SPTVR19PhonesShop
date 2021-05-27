@@ -8,6 +8,7 @@ package jsonServlets.builders;
 import entites.History;
 import facades.ProductFacade;
 import facades.UserFacade;
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -41,9 +42,10 @@ public class JsonHistoryBuilder {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("id", history.getId())
                 .add("count", history.getCount())
+                .add("price", history.getProduct().getPrice())
                 .add("name", history.getProduct().getName())
                 .add("login", history.getUser().getLogin())
-                .add("date", history.getTakeOn().toString());
+                .add("takeOn", history.getTakeOn().toString());
         return job.build();
     }
 }

@@ -5,11 +5,15 @@
  */
 package jsonServlets;
 
+import entites.History;
 import entites.Picture;
 import entites.Product;
+import entites.Tag;
 import entites.User;
+import facades.HistoryFacade;
 import facades.PictureFacade;
 import facades.ProductFacade;
+import facades.TagFacade;
 import facades.UserFacade;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +40,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import jsonServlets.builders.JsonHistoryBuilder;
 import jsonServlets.builders.JsonProductBuilder;
+import jsonServlets.builders.JsonTagBuilder;
 import jsonServlets.builders.JsonUserBuilder;
 
 /**
@@ -48,11 +54,15 @@ import jsonServlets.builders.JsonUserBuilder;
     "/changeProductJson",
     "/addProductJson",
     "/users",
-    "/histories",})
+    "/histories",
+    "/tagsJson",
+    "/addTagJson"})
 public class ManagerServletJson extends HttpServlet {
     @EJB ProductFacade productFacade;
     @EJB PictureFacade pictureFacade;
     @EJB UserFacade userFacade;
+    @EJB HistoryFacade historyFacade;
+    @EJB TagFacade tagFacade;
     public static final ResourceBundle pathToUploadDir = ResourceBundle.getBundle("property.settingUpload");
 
     /**
@@ -136,7 +146,7 @@ public class ManagerServletJson extends HttpServlet {
                 productFacade.create(product);
                 job = Json.createObjectBuilder();
                 json=job.add("requestStatus", "true")
-                    .add("info", "Создана книга: "+product.getName())
+                    .add("info", "Создана продукт: "+product.getName())
                     .add("book", new JsonProductBuilder().createProductJson(product))
                     .build()
                     .toString();
@@ -184,35 +194,43 @@ public class ManagerServletJson extends HttpServlet {
                 break;
              }
              case "/histories":{
-                 
+                 JsonArrayBuilder jab = Json.createArrayBuilder();
+                for (History h: historyFacade.findAll()){
+                    jab.add(new JsonHistoryBuilder().createProductJson(h));
+                }
+                JsonArray jsonResponse = jab.build();
+                json = jsonResponse.toString();
+                break;
              }
-            /*case "/addProductJson":{
+             case "/tagsJson":{
+                 json = new JsonTagBuilder().createAllTagsJson().toString();
+                 break;
+             }
+             case"/rolesJson":{
+                json = new JsonUserBuilder().createAllRolesJson().toString();
+                break;
+            }
+             case "/addTagJson":{
+                JsonReader jsonReader = Json.createReader(request.getReader());
                 JsonObject jsonObject = jsonReader.readObject();
-                String name = jsonObject.getString("name","");
-                int price = Integer.parseInt(jsonObject.getString("price","-1"));
-                int amount = Integer.parseInt(jsonObject.getString("amount","-1"));
-                if(name == null || "".equals(name) || price == -1 || amount == -1){
-                    job.add("info", "data fault");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
+                String name = jsonObject.getString("name", null);
+                if(name == null || "".equals(name)){
+                    job = Json.createObjectBuilder();
+                    json=job.add("requestStatus", "false")
+                    .add("info", "We failed. Abort mission")
+                    .build()
+                    .toString();
                     break;
                 }
-                if (productFacade.productExist(name, price)){
-                    job.add("info", "duplicates are not allowed");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
-                    break;
-                }
-                Product product = new Product(name, amount, price);
-                productFacade.create(product);
-                job.add("info", "Чётко");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
-                
-            }*/
+                Tag tag = new Tag(name);
+                tagFacade.create(tag);
+                job = Json.createObjectBuilder();
+                json=job.add("requestStatus", "true")
+                    .add("info", "Создан tag: "+tag.getName())
+                    .build()
+                    .toString();
+                break;
+             }
         }
         if(json == null || "".equals(json)){
             job = Json.createObjectBuilder();

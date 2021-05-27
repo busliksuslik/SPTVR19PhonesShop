@@ -41,7 +41,8 @@ public class JsonProductBuilder {
         job.add("id", product.getId())
                 .add("name", product.getName())
                 .add("count", product.getCount())
-                .add("price", product.getPrice());
+                .add("price", product.getPrice())
+                .add("tags", new JsonTagBuilder().createTagsJson(product));
         try{
             if(product.getPicture().getPath() == null){
             job.add("picture", "");

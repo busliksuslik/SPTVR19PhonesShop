@@ -1,5 +1,29 @@
 import {authModule} from './AuthModule.js';
 class UserModule{
+    async userList(){
+        let response = await fetch('listUsersJson', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+             return await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+    }
+    async rolesList(){
+        let response = await fetch('rolesJson', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+             return await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+    }
     registration(){
         document.getElementById('content').innerHTML = `
         <input placeholder="Name" name="name" id="login" value=""><br>
@@ -124,6 +148,51 @@ class UserModule{
             document.getElementById('info').innerHTML = 'Ошибка сервера';
             return null;
           }
+    }
+    async changeUserForm(){
+        var output = "";
+        var result = await this.productList();
+        var roles = await this.rolesList();
+        output +=`
+        <form>
+            <select id="user" size = "10">`;
+        for(let user of result){
+            output +=`<option value="${user.id}">${user.login}|${user.password}</option>`;
+        }
+        output +=`
+            </select>
+            <input id="login" placeholder="login" name="login" value="">    <br>
+            <select id="role" size = "3">`
+            for(let role of roles){
+                output +=`<option value="${user.id}">${user.login}|${user.password}</option>`;
+            }
+        output +=
+           `</select>
+            <input id="password" placeholder="password" name = "password" value=""><br>
+            <input style="" id="submit" type="button" value="Enter">
+        </form>`;
+        document.getElementById("content").innerHTML = output;
+        document.getElementById("submit").addEventListener("click",userModule.changeUser);
+    }
+    async changeUser(){
+        const data = {
+            "id" : document.getElementById("user").value,
+            "login" : document.getElementById("login").value,
+            "password" : document.getElementById("password").value
+        };
+        const response = await fetch('changeUserJson', {
+         method: 'POST',
+         body: JSON.stringify(data)
+       });
+       
+       if(response.ok){
+        const result = await response.json();
+        document.getElementById('info').innerHTML = result.info;
+        console.log("Request status: "+result.requestStatus);
+        productModule.changeProductForm();
+      }else{
+        console.log("Ошибка получения данных");
+      }
     }
 }
 const userModule = new UserModule();

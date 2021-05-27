@@ -32,9 +32,11 @@ class ProductModule{
                <h5 class="card-title"> ${product.name} </h5>
                <p class="card-text">Цена:${product.price}  </p>
                <p class="card-text">Кол-во:${product.count} </p>
-               <img src="insertFile/${product.picture}">
-               <p class="card-text"><span></span> <br></p>
-             </div>`;
+               <img src="insertFile/${product.picture}">`
+            for (let tag of product.tags){
+                output+=`<p class="card-text"><span>${tag}</span> <br></p>`;
+            }
+            output+=`</div>`;
         }
         
         
@@ -106,15 +108,6 @@ class ProductModule{
         document.getElementById('info').innerHTML = result.info;
         console.log("Request status: "+result.requestStatus);
         document.getElementById('content').innerHTML='';
-        if(result.requestStatus){
-          sessionStorage.setItem('token',JSON.stringify(result.token));
-          sessionStorage.setItem('role',JSON.stringify(result.role));
-        }else{
-          if(sessionStorage.getItem(token) !== null){
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('role');
-          }
-        }
       }else{
         console.log("Ошибка получения данных");
       }

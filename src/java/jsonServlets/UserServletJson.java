@@ -38,7 +38,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jsonServlets.builders.JsonPairBuilder;
+import jsonServlets.builders.JsonTagBuilder;
+import jsonServlets.builders.JsonUserBuilder;
 import servlets.LoginServlet;
+import tools.AnswerGenerator;
 import tools.EncryptPassword;
 import tools.HashPassword;
 
@@ -52,7 +55,8 @@ import tools.HashPassword;
     "/addMoney",
     "/addToCartJson",
     "/cartJson",
-    "/buyProductsJson",})
+    "/buyProductsJson",
+    "/rolesJson"})
 public class UserServletJson extends HttpServlet {
     @EJB private ProductFacade productFacade;
     @EJB private UserFacade userFacade;
@@ -77,7 +81,7 @@ public class UserServletJson extends HttpServlet {
         HttpSession session = request.getSession(false);
         String path = request.getServletPath();
         String json = null;
-        
+        AnswerGenerator ansGen = new AnswerGenerator();
         JsonObjectBuilder job ;
         JsonObject jsonObject ;
         switch (path) {
@@ -100,63 +104,43 @@ public class UserServletJson extends HttpServlet {
                 String login = jsonObject.getString("login", "");
                 String password = jsonObject.getString("password", "");
                 if(login == null || "".equals(login)
-                        || password == null || "".equals(password)
-                        ){
-                    job.add("info", "Пользователь не изменён");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
+                        || password == null || "".equals(password)){
+                    json = ansGen.generateAnswer("Пользователь не изменён", "false");
                     break;
                 }
                 if (userFacade.userExist(login)){
-                    job.add("info", "Already exists");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
+                    json = ansGen.generateAnswer("Already exists", "false");
                     break;
                 }
                 session = request.getSession(false);
                 User user = (User) session.getAttribute("user");
                 if(!user.getPassword().equals(encryptPassword.createHash(password, user.getSalt()))){
-                    job.add("info", "Invalid password");
-                    job.add("requestStatus","false");     
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
+                    json = ansGen.generateAnswer("Invalid password", "false");
                     break;
                 }
                 user.setLogin(login);
                 userFacade.edit(user);
                 session.setAttribute("user", user);
-                job.add("info", "success - new login: " + user.getLogin());
-                job.add("requestStatus","true");     
-                JsonObject jsonResponse = job.build();
-                json = jsonResponse.toString();
+                json = ansGen.generateAnswer("success - new login: " + user.getLogin(), "true");
                 break;
                 
             }
             case "/addMoney":{
                 JsonReader jsonReader ;
                 jsonReader = Json.createReader(request.getReader());
-                job = Json.createObjectBuilder();
                 jsonObject = jsonReader.readObject();
                 
                 String moneystr = jsonObject.getString("money", "");
                 User user = (User) session.getAttribute("user");
                 if (user == null){
-                    job.add("info","нет такого пользователя");
-                    job.add("requestStatus","false");
-                    JsonObject jsonResponse = job.build();
-                    json = jsonResponse.toString();
+                    json = ansGen.generateAnswer("нет такого пользователя", "false");
                     break;
                 }
                 Long moneyl = Math.round(Double.parseDouble(moneystr)*100);
                 int moneyint = moneyl.intValue();
                 user.setMoney(moneyint+user.getMoney());
                 userFacade.edit(user);
-                job.add("info", "деньги добавлены");
-                job.add("requestStatus","true");
-                JsonObject jsonResponse = job.build();
-                json = jsonResponse.toString();
+                json = ansGen.generateAnswer("деньги добавлены", "true");
                 break;
                 
             }
@@ -202,11 +186,16 @@ public class UserServletJson extends HttpServlet {
                     String id = jsonObject.getString("id", null);
                     Product product = productFacade.find(Long.parseLong(id));
                     String count = jsonObject.getString("count", null);
+                    if (Integer.parseInt(count) > product.getCount()){
+                        ansGen.generateAnswer("not enough item","false");
+                        break;
+                    }
                     price+= product.getPrice()*Integer.parseInt(count);
                     
                 }
           
                 User user = (User) session.getAttribute("user");
+                
                 if (user.getMoney() < price){
                     job.add("info","Недостаточно денег");
                     json = job.build().toString();
@@ -229,13 +218,10 @@ public class UserServletJson extends HttpServlet {
                 json = job.build().toString();
                 break;
             }
+            
         }
         if(json == null || "".equals(json)){
-            job = Json.createObjectBuilder();
-            job.add("info", "Ошибка обработки запроса");
-            job.add("requestStatus","false");     
-            JsonObject jsonResponse = job.build();
-            json = jsonResponse.toString();
+            json = ansGen.generateAnswer("Ошибка обработки запроса", "false");
         }
         try (PrintWriter out = response.getWriter()) {
             out.println(json);
