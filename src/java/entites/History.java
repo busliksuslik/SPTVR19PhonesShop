@@ -29,7 +29,6 @@ public class History implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     private Date takeOn;
     private int count;
-
     public History() {
     }
 

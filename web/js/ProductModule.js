@@ -264,6 +264,41 @@ class ProductModule{
         console.log("Ошибка получения данных");
       }
     }
+    async changeProductTagsForm(){
+        const response = await fetch('changeProductTagsFormJson', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json;charset:utf-8'}
+          });
+          var result;
+          if (response.ok) {
+             result = await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+        var products = result.products;
+        var tags = result.tags;
+        var output;
+        output = `</br><select id="product" size="6">`;
+        for (let product of products){
+            output += `<option value="${product.id}">${product.name}</option>`;
+        }
+        output += `</select><select id="tags" multiple size="6">`;
+        for (let tag of tags){
+            output += `<option value="${tag.id}">${tag.name}</option>`;
+        }
+        output += `</select><br><input type="button" id="submit" value="lol">`;
+        document.getElementById("content").innerHTML += output;
+        document.getElementById("submit").addEventListener('click',this.changeTags);
+        
+    }
+    async changeTags(){
+        const data = {
+            "product": document.getElementById("product").value,
+            "tags": document.getElementById("tags").value
+        };
+        console.log(data); 
+    }
         
         //console.log(document.getElementById("name").value)
 }

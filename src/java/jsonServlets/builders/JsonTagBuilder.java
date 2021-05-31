@@ -10,6 +10,7 @@ import entites.Role;
 import entites.Tag;
 import facades.ProductTagFacade;
 import facades.TagFacade;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +59,10 @@ public class JsonTagBuilder {
         JsonArrayBuilder jab = Json.createArrayBuilder();
         List<Tag> tags = tagFacade.findAll();
         tags.forEach((tag) -> {
-            jab.add(tag.getName());
+            JsonObjectBuilder job = Json.createObjectBuilder();
+            job.add("name", tag.getName())
+                    .add("id", tag.getId());
+            jab.add(job.build());
         });
         return jab.build();
     }

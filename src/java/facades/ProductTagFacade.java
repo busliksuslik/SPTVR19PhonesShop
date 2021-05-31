@@ -71,5 +71,10 @@ public class ProductTagFacade extends AbstractFacade<ProductTag> {
                     .executeUpdate();
         }
     }
+    public void removeAllTagsFromProduct(Product p){
+            em.createQuery("DELETE FROM ProductTag pt WHERE pt.product = :product")
+                    .setParameter("product", p)
+                    .executeUpdate();
+    }
 }
     

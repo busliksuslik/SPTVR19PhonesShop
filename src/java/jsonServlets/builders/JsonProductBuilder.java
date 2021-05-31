@@ -7,13 +7,16 @@ package jsonServlets.builders;
 
 import entites.Product;
 import facades.ProductFacade;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -56,4 +59,11 @@ public class JsonProductBuilder {
                 
         return job.build();
     }
+    public JsonArray createAllProducts(){
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        for (Product p : productFacade.findAll()){
+            jab.add(this.createProductJson(p));
+        }   
+        return jab.build();
+        }
 }

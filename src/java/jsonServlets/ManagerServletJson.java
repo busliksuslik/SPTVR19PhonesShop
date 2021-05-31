@@ -8,17 +8,20 @@ package jsonServlets;
 import entites.History;
 import entites.Picture;
 import entites.Product;
+import entites.ProductTag;
 import entites.Tag;
 import entites.User;
 import facades.HistoryFacade;
 import facades.PictureFacade;
 import facades.ProductFacade;
+import facades.ProductTagFacade;
 import facades.TagFacade;
 import facades.UserFacade;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
@@ -30,9 +33,11 @@ import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -44,6 +49,7 @@ import jsonServlets.builders.JsonHistoryBuilder;
 import jsonServlets.builders.JsonProductBuilder;
 import jsonServlets.builders.JsonTagBuilder;
 import jsonServlets.builders.JsonUserBuilder;
+import tools.AnswerGenerator;
 
 /**
  *
@@ -56,9 +62,12 @@ import jsonServlets.builders.JsonUserBuilder;
     "/users",
     "/histories",
     "/tagsJson",
-    "/addTagJson"})
+    "/addTagJson",
+    "/changeProductTagsFormJson",
+    "/changeProductTagsJson",})
 public class ManagerServletJson extends HttpServlet {
     @EJB ProductFacade productFacade;
+    @EJB ProductTagFacade productTagFacade;
     @EJB PictureFacade pictureFacade;
     @EJB UserFacade userFacade;
     @EJB HistoryFacade historyFacade;
@@ -230,6 +239,35 @@ public class ManagerServletJson extends HttpServlet {
                     .build()
                     .toString();
                 break;
+             }
+             case "/changeProductTagsFormJson":{
+                 job = Json.createObjectBuilder();
+                 job.add("tags", new JsonTagBuilder().createAllTagsJson())
+                    .add("products", new JsonProductBuilder().createAllProducts());
+                 json = job.build().toString();
+                 break;
+             }
+             case "/changeProductTagsJson":{
+                JsonReader jsonReader = Json.createReader(request.getReader());
+                JsonObject jsonObject = jsonReader.readObject();
+                Long id;
+                try {
+                    id = Long.parseLong(jsonObject.getString("id", null));
+                } catch (NumberFormatException e){
+                    json = new AnswerGenerator().generateAnswer("invalid id", "false");
+                    break;
+                }
+                Product product = productFacade.find(id);
+                productTagFacade.removeAllTagsFromProduct(product);
+                JsonArray tagsArray = jsonObject.getJsonArray("tags");
+                for(JsonValue jo : tagsArray){
+                    JsonNumber jn = (JsonNumber)jo;
+                    Long tagId = jn.longValue();
+                    ProductTag pt = new ProductTag(productFacade.find(id),tagFacade.find(tagId));
+                    productTagFacade.create(pt);
+                }
+                break;
+                
              }
         }
         if(json == null || "".equals(json)){

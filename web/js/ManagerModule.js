@@ -35,6 +35,7 @@ class ManagerModule{
             managerModule.addTagForm();
         });
         document.getElementById("changeProductTags").addEventListener('click',  function(){
+            productModule.changeProductTagsForm();
         });
         document.getElementById("changeTag").addEventListener('click',  function(){
         });
