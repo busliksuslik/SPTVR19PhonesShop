@@ -5,8 +5,16 @@
  */
 package jsonServlets;
 
+import entites.Role;
+import entites.User;
+import facades.RoleFacade;
+import facades.TagFacade;
+import facades.UserFacade;
+import facades.UserRolesFacade;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -16,13 +24,25 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import jsonServlets.builders.JsonRolesBuilder;
+import jsonServlets.builders.JsonUserBuilder;
+import servlets.LoginServlet;
+import tools.AnswerGenerator;
 
 /**
  *
  * @author user
  */
-@WebServlet(name = "AdminServletJson", urlPatterns = {"/changeUserJson"})
+@WebServlet(name = "AdminServletJson", urlPatterns = {
+    "/changeUserRoleFormJson",
+    "/changeUserRoleJson"})
 public class AdminServletJson extends HttpServlet {
+    @EJB UserFacade userFacade;
+    @EJB RoleFacade roleFacade;
+    @EJB TagFacade tagFacade;
+    @EJB UserRolesFacade userRolesFacade;
+    private AnswerGenerator ansGen = new AnswerGenerator();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,18 +58,62 @@ public class AdminServletJson extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String json = null;
+        HttpSession session = request.getSession(false);
+        if(session == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        User user = (User) session.getAttribute("user");
+        if(user == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        boolean isRole = userRolesFacade.isRole("ADMIN", user);
+        if(!isRole){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        
+        JsonObjectBuilder job = Json.createObjectBuilder();
         
         String path = request.getServletPath();
 
         switch (path) {
-            case "/changeUserJson":{
-                JsonReader jsonReader = Json.createReader(request.getReader());
-                JsonObjectBuilder job = Json.createObjectBuilder();
-                JsonObject obj = jsonReader.readObject();
-                String userId = obj.getString("iserId", null);
-                String roleId = obj.getString("roleId", null);
-                
+            case "/changeUserRoleFormJson":{
+                job.add("roles", new JsonRolesBuilder().createRoles())
+                        .add("users", new JsonUserBuilder().createAllUsersJson());
+                json = job.build().toString();
+                break;
             }
+            case "/changeUserRoleJson":{              
+                JsonReader jsonReader = Json.createReader(request.getReader());
+                JsonObject obj = jsonReader.readObject();
+                String userId = obj.getString("user", null);
+                String roleId = obj.getString("role", null);
+                user = userFacade.find(Long.parseLong(userId));
+                Role role = roleFacade.find(Long.parseLong(roleId));
+                userRolesFacade.deleteAllRoles(user);
+                for(int i = 3; i >= role.getId(); i--){
+                    userRolesFacade.setRoleToUser(roleFacade.find(new Long(i)), user);
+                }
+                break;
+            }
+        }
+        if(json == null || "".equals(json)){
+            job = Json.createObjectBuilder();
+            job.add("info", "Ошибка обработки запроса");
+            job.add("requestStatus","false");     
+            JsonObject jsonResponse = job.build();
+            json = jsonResponse.toString();
+        }
+        try (PrintWriter out = response.getWriter()) {
+            out.println(json);
         }
     }
 

@@ -2,6 +2,7 @@ import {authModule} from "./AuthModule.js";
 import {productModule} from "./ProductModule.js";
 import {userModule} from "./UserModule.js";
 import {managerModule} from "./ManagerModule.js";
+import {adminModule} from "./AdminModule.js";
 
 //import {phoneModule} from './PhoneModule.js';
 
@@ -38,11 +39,12 @@ document.getElementById("addHistoryForm").onclick = function (){
 
 document.getElementById("managerMode").onclick = function (){
     toggleMenuActive("managerMode");
-    managerModule.printAdminMenu();
+    managerModule.printManagerMenu();
 };
 
 document.getElementById("adminMode").onclick = function (){
     toggleMenuActive("adminMode");
+    adminModule.printAdminMenu();
 };
 
 document.getElementById("cart").onclick = function (){

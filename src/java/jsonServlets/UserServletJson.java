@@ -64,6 +64,7 @@ public class UserServletJson extends HttpServlet {
     @EJB private UserRolesFacade userRolesFacade;
     @EJB private HistoryFacade historyFacade;
      private EncryptPassword encryptPassword = new HashPassword();
+     private AnswerGenerator ansGen = new AnswerGenerator();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -78,17 +79,38 @@ public class UserServletJson extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession(false);
-        String path = request.getServletPath();
         String json = null;
-        AnswerGenerator ansGen = new AnswerGenerator();
+        HttpSession session = request.getSession(false);
+        if (session == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        User user = (User) session.getAttribute("user");
+        if (user  == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        Boolean isRole =  userRolesFacade.isRole("CUSTOMER" , user);
+        if (!isRole){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        String path = request.getServletPath();
+        
+        
         JsonObjectBuilder job ;
         JsonObject jsonObject ;
         switch (path) {
             case "/mutateOne":{
                 job = Json.createObjectBuilder();
                 session = request.getSession(false);
-                User user = (User) session.getAttribute("user");
+                user = (User) session.getAttribute("user");
                 job.add("login", user.getLogin());
                 JsonObject jsonResponse = job.build();
                 json = jsonResponse.toString();
@@ -113,7 +135,7 @@ public class UserServletJson extends HttpServlet {
                     break;
                 }
                 session = request.getSession(false);
-                User user = (User) session.getAttribute("user");
+                user = (User) session.getAttribute("user");
                 if(!user.getPassword().equals(encryptPassword.createHash(password, user.getSalt()))){
                     json = ansGen.generateAnswer("Invalid password", "false");
                     break;
@@ -131,7 +153,7 @@ public class UserServletJson extends HttpServlet {
                 jsonObject = jsonReader.readObject();
                 
                 String moneystr = jsonObject.getString("money", "");
-                User user = (User) session.getAttribute("user");
+                user = (User) session.getAttribute("user");
                 if (user == null){
                     json = ansGen.generateAnswer("нет такого пользователя", "false");
                     break;
@@ -194,7 +216,7 @@ public class UserServletJson extends HttpServlet {
                     
                 }
           
-                User user = (User) session.getAttribute("user");
+                user = (User) session.getAttribute("user");
                 
                 if (user.getMoney() < price){
                     job.add("info","Недостаточно денег");

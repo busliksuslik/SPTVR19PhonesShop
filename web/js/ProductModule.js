@@ -293,11 +293,22 @@ class ProductModule{
         
     }
     async changeTags(){
+        var selected = [];
+        for (var option of document.getElementById("tags").options){
+           if (option.selected){
+               selected.push(option.value);
+           }
+        }
         const data = {
             "product": document.getElementById("product").value,
-            "tags": document.getElementById("tags").value
+            "tags": selected
         };
-        console.log(data); 
+        const response = await fetch('changeProductTagsJson', {
+         method: 'POST',
+         body: JSON.stringify(data)
+       });
+        
+        console.log(selected); 
     }
         
         //console.log(document.getElementById("name").value)

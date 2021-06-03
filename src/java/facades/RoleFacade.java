@@ -6,6 +6,7 @@
 package facades;
 
 import entites.Role;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,6 +35,13 @@ public class RoleFacade extends AbstractFacade<Role> {
             return (Role) em.createQuery("SELECT r FROM Role r WHERE r.name = :name")
                     .setParameter("name", name)
                     .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public List<Role> getRoles(){
+        try {
+            return (List<Role>) em.createQuery("SELECT r FROM Role r").getResultList();
         } catch (Exception e) {
             return null;
         }

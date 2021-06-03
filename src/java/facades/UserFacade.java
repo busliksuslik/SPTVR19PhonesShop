@@ -81,7 +81,7 @@ public class UserFacade extends AbstractFacade<User> {
     }
     public List<User> findAllExceptAdmin(){
         try {
-            return (List<User>) em.createQuery("SELECT u FROM User u WHERE NOT(u.login = 'admin' AND u.password = 'admin')")
+            return (List<User>) em.createQuery("SELECT u FROM User u WHERE NOT(u.login = 'admin')")
                     .getResultList();
         } catch (Exception e) {
             return null;

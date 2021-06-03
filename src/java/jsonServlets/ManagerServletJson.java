@@ -17,6 +17,7 @@ import facades.ProductFacade;
 import facades.ProductTagFacade;
 import facades.TagFacade;
 import facades.UserFacade;
+import facades.UserRolesFacade;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +38,7 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -44,11 +46,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import jsonServlets.builders.JsonHistoryBuilder;
 import jsonServlets.builders.JsonProductBuilder;
 import jsonServlets.builders.JsonTagBuilder;
 import jsonServlets.builders.JsonUserBuilder;
+import servlets.LoginServlet;
 import tools.AnswerGenerator;
 
 /**
@@ -72,6 +76,8 @@ public class ManagerServletJson extends HttpServlet {
     @EJB UserFacade userFacade;
     @EJB HistoryFacade historyFacade;
     @EJB TagFacade tagFacade;
+    @EJB UserRolesFacade userRolesFacade;
+    private AnswerGenerator ansGen = new AnswerGenerator();
     public static final ResourceBundle pathToUploadDir = ResourceBundle.getBundle("property.settingUpload");
 
     /**
@@ -87,8 +93,30 @@ public class ManagerServletJson extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        String uploadFolder = ManagerServletJson.pathToUploadDir.getString("dir");
         String json = null;
+        HttpSession session = request.getSession(false);
+        if (session == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        User user = (User) session.getAttribute("user");
+        if (user  == null){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        Boolean isRole =  userRolesFacade.isRole("MANAGER" , user);
+        if (!isRole){
+            json = ansGen.generateAnswer("нет прав", "false");
+            try (PrintWriter out = response.getWriter()) {
+                out.println(json);}
+            return;
+        }
+        String uploadFolder = ManagerServletJson.pathToUploadDir.getString("dir");
+        
         JsonObjectBuilder job = Json.createObjectBuilder();
         String path = request.getServletPath();
         switch (path) {
@@ -252,7 +280,7 @@ public class ManagerServletJson extends HttpServlet {
                 JsonObject jsonObject = jsonReader.readObject();
                 Long id;
                 try {
-                    id = Long.parseLong(jsonObject.getString("id", null));
+                    id = Long.parseLong(jsonObject.getString("product", null));
                 } catch (NumberFormatException e){
                     json = new AnswerGenerator().generateAnswer("invalid id", "false");
                     break;
@@ -261,8 +289,8 @@ public class ManagerServletJson extends HttpServlet {
                 productTagFacade.removeAllTagsFromProduct(product);
                 JsonArray tagsArray = jsonObject.getJsonArray("tags");
                 for(JsonValue jo : tagsArray){
-                    JsonNumber jn = (JsonNumber)jo;
-                    Long tagId = jn.longValue();
+                    JsonString jn = (JsonString)jo;
+                    Long tagId = Long.parseLong(jn.getString());
                     ProductTag pt = new ProductTag(productFacade.find(id),tagFacade.find(tagId));
                     productTagFacade.create(pt);
                 }

@@ -10,7 +10,7 @@
 import {productModule} from "./ProductModule.js";
 import {userModule} from "./UserModule.js";
 class ManagerModule{
-    printAdminMenu(){
+    printManagerMenu(){
         document.getElementById("content").innerHTML = `
             <a class="btn btn-primary" id="addProduct"        role="button">Add product</a>
             <a class="btn btn-primary" id="changeProduct"     role="button">Change product</a>
@@ -36,8 +36,6 @@ class ManagerModule{
         });
         document.getElementById("changeProductTags").addEventListener('click',  function(){
             productModule.changeProductTagsForm();
-        });
-        document.getElementById("changeTag").addEventListener('click',  function(){
         });
     }
     async histories(){

@@ -167,7 +167,7 @@ public class LoginServletJson extends HttpServlet {
             
         }
         
-        if(json == null && "".equals(json)){
+        if(json == null || "".equals(json)){
             json=job.add("requestStatus", "false")
                         .add("info", "Ошибка обработки запроса")
                         .build()

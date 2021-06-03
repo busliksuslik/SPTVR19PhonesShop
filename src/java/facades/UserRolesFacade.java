@@ -72,12 +72,17 @@ public class UserRolesFacade extends AbstractFacade<UserRoles> {
     }
     public Role getTopUserRole(User u) {
         try {
-            return (Role) em.createQuery("SELECT ur.role FROM UserRoles ur WHERE ur.user = :user")
+            return (Role) em.createQuery("SELECT ur.role FROM UserRoles ur WHERE ur.user = :user ORDER BY ur.role")
                     .setParameter("user", u)
                     .getResultList().get(0);
         } catch (Exception e) {
             return null;
         }
+    }
+    public void deleteAllRoles(User u){
+        em.createQuery("DELETE FROM UserRoles ur WHERE ur.user = :user ")
+                .setParameter("user", u)
+                .executeUpdate();
     }
 
 

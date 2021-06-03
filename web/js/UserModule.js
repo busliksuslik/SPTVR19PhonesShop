@@ -189,11 +189,48 @@ class UserModule{
         const result = await response.json();
         document.getElementById('info').innerHTML = result.info;
         console.log("Request status: "+result.requestStatus);
-        productModule.changeProductForm();
       }else{
         console.log("Ошибка получения данных");
       }
     }
+    async changeUserRoleForm(){
+        var result ;
+        let response = await fetch('changeUserRoleFormJson', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json;charset:utf-8' }
+          });
+          if (response.ok) {
+            result = await response.json();
+          } else {
+            document.getElementById('info').innerHTML = 'Ошибка сервера';
+            return null;
+          }
+        var users = result.users;
+        var roles = result.roles;
+        
+        var output;
+        output = `</br><select id="user" size="6">`;
+        for (let user of users){
+            output += `<option value="${user.id}">${user.login}</option>`;
+        }
+        output += `</select><select id="role" multiple size="6">`;
+        for (let role of roles){
+            output += `<option value="${role.id}">${role.name}</option>`;
+        }
+        output += `</select><br><input type="button" id="submit" value="lol">`;
+        document.getElementById("content").innerHTML += output;
+        document.getElementById("submit").addEventListener("click",userModule.changeUserRole);
+    }
+    async changeUserRole(){
+        const data = {
+            "user" : document.getElementById("user").value,
+            "role" : document.getElementById("role").value
+        };
+        const response = await fetch('changeUserRoleJson', {
+         method: 'POST',
+         body: JSON.stringify(data)
+       });
+    } 
 }
 const userModule = new UserModule();
 export {userModule};

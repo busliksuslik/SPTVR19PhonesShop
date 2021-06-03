@@ -10,6 +10,7 @@ import entites.User;
 import facades.RoleFacade;
 import facades.UserFacade;
 import facades.UserRolesFacade;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,12 +31,14 @@ import javax.naming.NamingException;
 public class JsonUserBuilder {
     @EJB private UserRolesFacade userRolesFacade;
     @EJB private RoleFacade roleFacade;
+    @EJB private UserFacade userFacade;
     public JsonUserBuilder() {
         Context ctx;
         try {
             ctx = new InitialContext();
             this.roleFacade = (RoleFacade) ctx.lookup("java:global/SPTVR19PhonesShop/RoleFacade");
             this.userRolesFacade = (UserRolesFacade) ctx.lookup("java:global/SPTVR19PhonesShop/UserRolesFacade");
+            this.userFacade = (UserFacade) ctx.lookup("java:global/SPTVR19PhonesShop/UserFacade");
         } catch (NamingException ex) {
             Logger.getLogger(JsonProductBuilder.class.getName()).log(Level.SEVERE, "Нет такого класса", ex);
         }
@@ -62,6 +65,18 @@ public class JsonUserBuilder {
             jab.add(createRoleJson(role));
         });
         
+        return jab.build();
+    }
+    public JsonArray createAllUsersJson(){
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        JsonObjectBuilder job;
+        List<User> users = userFacade.findAllExceptAdmin();
+        for (User u: users){
+             job = Json.createObjectBuilder();
+            jab.add(job.add("id",u.getId())
+                .add("login", u.getLogin())
+                .add("money", u.getMoney()));
+        }
         return jab.build();
     }
 }
